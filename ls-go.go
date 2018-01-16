@@ -82,6 +82,7 @@ func main() {
 
 func listDir(pathStr string) {
 	items, err := ioutil.ReadDir(pathStr)
+	// if we couldn'r read the file, print a "header" with error message and use error-looking colors
 	if err != nil {
 		if strings.Contains(err.Error(), "no such file or directory") || strings.Contains(err.Error(), "permission denied") {
 			fmt.Println(ConfigColor["folderHeader"]["error"] + "► " + prettifyPath(pathStr) + Reset)
@@ -105,9 +106,8 @@ func listDir(pathStr string) {
 		items = filteredItems
 	}
 
-	if len(*args.find) > 0 && len(items) == 0 {
-	} else if len(*args.paths) == 1 && (*args.paths)[0] == "." && !*args.recurse {
-	} else {
+	if !(len(*args.find) > 0 && len(items) == 0) &&
+		!(len(*args.paths) == 1 && (*args.paths)[0] == "." && !*args.recurse) {
 		printFolderHeader(pathStr)
 	}
 
@@ -128,9 +128,12 @@ func listDir(pathStr string) {
 func listFiles(parentDir string, items *[]os.FileInfo) {
 	absPath, err := filepath.Abs(parentDir)
 	check(err)
+
+	// collect all the contents here
 	files := []*DisplayItem{}
 	dirs := []*DisplayItem{}
 
+	// to help with formatting, we need to know the length of the longest name
 	longestOwnerName := 0
 	longestGroupName := 0
 	if *args.owner {
@@ -177,6 +180,7 @@ func listFiles(parentDir string, items *[]os.FileInfo) {
 			}
 		}
 
+		// read some info about linked file if this item is a symlink
 		if fileInfo.Mode()&os.ModeSymlink != 0 {
 			getLinkInfo(&displayItem, absPath)
 		}
@@ -225,12 +229,16 @@ func listFiles(parentDir string, items *[]os.FileInfo) {
 		sort.Sort(ByKind(files))
 	}
 
+	// combine the items together again after sorting
 	allItems := append(dirs, files...)
+
+	// if using "long" display, just print one item per line
 	if *args.bytes || *args.mdate || *args.owner || *args.perms || *args.long {
 		for _, item := range allItems {
 			fmt.Println(item.display)
 		}
 	} else {
+		// but if not, try to format in columns, link `ls` would
 		strs := []string{}
 		for _, item := range allItems {
 			strs = append(strs, item.display)
@@ -279,6 +287,7 @@ func linkString(item *DisplayItem, absPath string) string {
 func fileString(item *DisplayItem) string {
 	ext := strings.ToLower(item.ext)
 	var colors [2]string
+	// figure out which color to choose
 	if MediaTypes.Has(ext) {
 		colors = FileColor["_media"]
 	} else if CompressTypes.Has(ext) {
@@ -301,8 +310,10 @@ func fileString(item *DisplayItem) string {
 	return strings.Join(displayStrings, "")
 }
 
+// check for executable permissions
 func isExecutableScript(item *DisplayItem) bool {
 	executable := false
+	// if its a link, see if the linked file is executable
 	if item.link != nil {
 		if item.link.info != nil {
 			executable = (item.link.info.Mode()&0111) != 0 && !item.link.info.IsDir()
