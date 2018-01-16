@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"syscall"
@@ -18,72 +19,30 @@ import (
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
-// declare the struct that holds all the arguments
-type arguments struct {
-	paths    *[]string
-	all      *bool
-	bytes    *bool
-	mdate    *bool
-	owner    *bool
-	perms    *bool
-	long     *bool
-	dirs     *bool
-	files    *bool
-	links    *bool
-	sortSize *bool
-	sortTime *bool
-	sortKind *bool
-	stats    *bool
-	icons    *bool
-	recurse  *bool
-	find     *string
-}
-
 type DisplayItem struct {
 	display  string
 	info     os.FileInfo
 	basename string
 	ext      string
-	link     string
+	link     *LinkInfo
+}
+
+type LinkInfo struct {
+	path string
+	info os.FileInfo
 }
 
 // configure the arguments
 var (
-	True       = true
-	sizeUnits  = []string{" B", "kB", "MB", "GB", "TB"}
-	dateFormat = "02.Jan'06"
-	timeFormat = "15:04:05"
-	args       = arguments{
-		kingpin.Arg("paths", "the files(s) and/or folder(s) to display").Default(".").Strings(),
-		kingpin.Flag("all", "show hidden files").Short('a').Bool(),
-		kingpin.Flag("bytes", "include size").Short('b').Bool(),
-		kingpin.Flag("mdate", "include modification date").Short('m').Bool(),
-		kingpin.Flag("owner", "include owner and group").Short('o').Bool(),
-		kingpin.Flag("perms", "include permissions for owner, group, and other").Short('p').Bool(),
-		kingpin.Flag("long", "include size, date, owner, and permissions").Short('l').Bool(),
-		kingpin.Flag("dirs", "only show directories").Short('d').Bool(),
-		kingpin.Flag("files", "only show files").Short('f').Bool(),
-		kingpin.Flag("links", "show paths for symlinks").Short('L').Bool(),
-		kingpin.Flag("size", "sort items by size").Short('s').Bool(),
-		kingpin.Flag("time", "sort items by time").Short('t').Bool(),
-		kingpin.Flag("kind", "sort items by extension").Short('k').Bool(),
-		kingpin.Flag("stats", "show statistics").Short('S').Bool(),
-		kingpin.Flag("icons", "show folder icon before dirs").Short('i').Bool(),
-		kingpin.Flag("recurse", "traverse all dirs recursively").Short('r').Bool(),
-		kingpin.Flag("find", "filter items with a regexp").Short('F').String(),
-	}
+	True             = true
+	sizeUnits        = []string{" B", "kB", "MB", "GB", "TB"}
+	dateFormat       = "02.Jan'06"
+	timeFormat       = "15:04:05"
+	start      int64 = 0
 )
 
-func argsPostParse() {
-	if *args.long {
-		args.bytes = &True
-		args.mdate = &True
-		args.owner = &True
-		args.perms = &True
-	}
-}
-
 func main() {
+	start = time.Now().UnixNano()
 	// auto-generate help text for the command with -h
 	kingpin.CommandLine.HelpFlag.Short('h')
 
@@ -94,11 +53,11 @@ func main() {
 	// separate the directories from the regular files
 	dirs := []string{}
 	files := []os.FileInfo{}
-	for _, path := range *args.paths {
-		fileStat, err := os.Stat(path)
+	for _, pathStr := range *args.paths {
+		fileStat, err := os.Stat(pathStr)
 		check(err)
 		if fileStat.IsDir() {
-			dirs = append(dirs, path)
+			dirs = append(dirs, pathStr)
 		} else {
 			files = append(files, fileStat)
 		}
@@ -111,14 +70,26 @@ func main() {
 	}
 
 	// then list the contents of each directory
-	for _, dir := range dirs {
+	for i, dir := range dirs {
+		// print a blank line between directories, but not before the first one
+		if i > 0 {
+			fmt.Println("")
+		}
 		listDir(dir)
 	}
 }
 
-func listDir(path string) {
-	items, err := ioutil.ReadDir(path)
-	check(err)
+func listDir(pathStr string) {
+	items, err := ioutil.ReadDir(pathStr)
+	if err != nil {
+		if strings.Contains(err.Error(), "no such file or directory") || strings.Contains(err.Error(), "permission denied") {
+			fmt.Println(ConfigColor["folderHeader"]["error"] + "► " + prettifyPath(pathStr) + Reset)
+			fmt.Println(err.Error())
+			return
+		} else {
+			check(err)
+		}
+	}
 
 	// filter by the regexp if one was passed
 	if len(*args.find) > 0 {
@@ -136,28 +107,28 @@ func listDir(path string) {
 	if len(*args.find) > 0 && len(items) == 0 {
 	} else if len(*args.paths) == 1 && (*args.paths)[0] == "." && !*args.recurse {
 	} else {
-		printFolderHeader(path)
+		printFolderHeader(pathStr)
 	}
 
 	if len(items) > 0 {
-		listFiles(path, &items)
+		listFiles(pathStr, &items)
 	}
 
 	if *args.recurse {
 		for _, item := range items {
 			if item.IsDir() {
-				listDir(path + item.Name() + "/")
+				fmt.Println("") // put a blank line between directories
+				listDir(path.Join(pathStr, item.Name()))
 			}
 		}
 	}
 }
 
 func listFiles(parentDir string, items *[]os.FileInfo) {
-	//prettyPath := prettifyPath(parentDir)
 	absPath, err := filepath.Abs(parentDir)
 	check(err)
-	files := []DisplayItem{}
-	dirs := []DisplayItem{}
+	files := []*DisplayItem{}
+	dirs := []*DisplayItem{}
 
 	longestOwnerName := 0
 	longestGroupName := 0
@@ -171,7 +142,6 @@ func listFiles(parentDir string, items *[]os.FileInfo) {
 
 	for _, fileInfo := range *items {
 		displayItem := DisplayItem{info: fileInfo}
-		filePath := path.Join(absPath, fileInfo.Name())
 
 		var basename, ext string
 		// if this is a dotfile (hidden file)
@@ -193,9 +163,13 @@ func listFiles(parentDir string, items *[]os.FileInfo) {
 		displayItem.basename = basename
 
 		if fileInfo.IsDir() {
-			dirs = append(dirs, displayItem)
+			dirs = append(dirs, &displayItem)
 		} else {
-			files = append(files, displayItem)
+			files = append(files, &displayItem)
+		}
+
+		if fileInfo.Mode()&os.ModeSymlink != 0 {
+			getLinkInfo(&displayItem, absPath)
 		}
 
 		owner, group := getOwnerAndGroup(&fileInfo)
@@ -206,7 +180,7 @@ func listFiles(parentDir string, items *[]os.FileInfo) {
 		}
 
 		if *args.owner {
-			ownerInfo := []string{Reset, ownerColor + owner, groupColor + group, Reset}
+			ownerInfo := []string{Reset + ownerColor + owner, groupColor + group, Reset}
 			displayItem.display += strings.Join(ownerInfo, " ")
 		}
 
@@ -225,37 +199,75 @@ func listFiles(parentDir string, items *[]os.FileInfo) {
 		}
 
 		if *args.links && fileInfo.Mode()&os.ModeSymlink != 0 {
-			link, err := os.Readlink(filePath)
-			fmt.Println(link)
-			check(err)
-			displayItem.link = link
+			displayItem.display += linkString(&displayItem, absPath)
 		}
-		fmt.Println(displayItem.display)
-		//fmt.Println(fileInfo.Name())
+	}
+
+	if !*args.files {
+		if *args.sortTime {
+			sort.Sort(ByTime(dirs))
+		}
+
+		for _, dir := range dirs {
+			fmt.Println(dir.display)
+		}
+	}
+
+	if !*args.dirs {
+		if *args.sortSize {
+			sort.Sort(BySize(files))
+		}
+
+		if *args.sortTime {
+			sort.Sort(ByTime(files))
+		}
+
+		if *args.sortKind {
+			sort.Sort(ByKind(files))
+		}
+
+		for _, file := range files {
+			fmt.Println(file.display)
+		}
+	}
+
+	if *args.stats {
+		printStats(len(files), len(dirs))
 	}
 }
 
-/*
-linkString = (file) ->
-    reset + colors['_link']['arrow'] + " ► " + colors['_link'][(file in stats.brokenLinks) and 'broken' or 'path'] + fs.readlinkSync(file)
+func getLinkInfo(item *DisplayItem, absPath string) {
+	fullPath := path.Join(absPath, item.info.Name())
+	linkPath, err1 := os.Readlink(fullPath)
+	check(err1)
+	linkInfo, err2 := os.Stat(linkPath)
+	if *args.linkRel {
+		linkRel, _ := filepath.Rel(absPath, linkPath)
+		if linkRel != "" && len(linkRel) <= len(linkPath) {
+			linkPath = linkRel
+		}
+	}
+	link := LinkInfo{
+		path: linkPath,
+	}
+	item.link = &link
+	if linkInfo != nil {
+		link.info = linkInfo
+	} else if !strings.Contains(err2.Error(), "no such file or directory") {
+		check(err2)
+	}
+}
 
-nameString = (name, ext, stat) ->
-    key = if mediaTypes.has(ext) then "_media" else ext
-    name = " " + colors[colors[key]? and key or '_default'][0] + name + reset
-    if ((stat.mode >> 6) & 0b001) && args.icons
-        ' ' + BW(1) + fg(0, 5, 0) + '>_' + reset + name
-    else
-        name
-
-extString = (ext) ->
-    key = if mediaTypes.has(ext) then "_media" else ext
-    colors[colors[key]? and key or '_default'][1] + '.' + ext + reset
-
-dirString = (name, ext) ->
-    c = name and '_dir' or '_.dir'
-    name = '📂 ' + name if args.icons
-    colors[c][0] + (name and (" " + name) or "") + (if ext then colors[c][1] + '.' + colors[c][2] + ext else "") + " "
-*/
+func linkString(item *DisplayItem, absPath string) string {
+	colors := ConfigColor["link"]
+	displayStrings := []string{colors["arrow"], "►"}
+	if item.link.info == nil {
+		displayStrings = append(displayStrings, colors["broken"]+item.link.path+Reset)
+	} else {
+		displayStrings = append(displayStrings, colors["path"]+item.link.path+Reset)
+	}
+	return strings.Join(displayStrings, " ")
+}
 
 func fileString(item *DisplayItem) string {
 	ext := strings.ToLower(item.ext)
@@ -274,12 +286,24 @@ func fileString(item *DisplayItem) string {
 		ext = "." + ext
 	}
 	execIcon := ""
-	executable := item.info.Mode() & 0111
-	if executable != 0 && *args.icons {
+	executable := isExecutableScript(item)
+	if executable && *args.icons {
 		execIcon = BgGray(1) + FgRGB(0, 5, 0) + ">_" + Reset + " "
 	}
 	displayStrings := []string{execIcon, colors[0], item.basename, colors[1], ext, Reset}
 	return strings.Join(displayStrings, "")
+}
+
+func isExecutableScript(item *DisplayItem) bool {
+	executable := false
+	if item.link != nil {
+		if item.link.info != nil {
+			executable = (item.link.info.Mode()&0111) != 0 && !item.link.info.IsDir()
+		}
+	} else if item.info.Mode()&0111 != 0 {
+		executable = true
+	}
+	return executable
 }
 
 func dirString(item *DisplayItem) string {
@@ -305,7 +329,7 @@ func permString(info os.FileInfo, ownerColor string, groupColor string) string {
 	coloredStrings := []string{defaultColor, modeString[0:1]}
 	coloredStrings = append(coloredStrings, ownerColor+modeString[1:4])
 	coloredStrings = append(coloredStrings, groupColor+modeString[4:7])
-	coloredStrings = append(coloredStrings, defaultColor+modeString[7:], Reset)
+	coloredStrings = append(coloredStrings, defaultColor+modeString[7:], Reset, Reset)
 	return strings.Join(coloredStrings, " ")
 }
 
@@ -313,7 +337,7 @@ func sizeString(size int64) string {
 	for i, unit := range sizeUnits {
 		base := int64(math.Pow(10, float64(i*3)))
 		if size < base*1000 {
-			return SizeColor[unit] + pad.Left(fmt.Sprintf("%d", size/base), 4, " ") + unit + Reset
+			return SizeColor[unit] + pad.Left(fmt.Sprintf("%d", size/base), 4, " ") + unit + " " + Reset
 		}
 	}
 	return strconv.Itoa(int(size))
@@ -326,16 +350,16 @@ func timeString(modtime time.Time) string {
 	check(err)
 	// generate a color based on the hour of the day. darkest around midnight and whitest around noon
 	timeColor := 14 - int(8*math.Cos(math.Pi*float64(hour)/12))
-	colored := []string{FgGray(22), dateStr, FgGray(timeColor) + timeStr, Reset}
+	colored := []string{FgGray(22) + dateStr, FgGray(timeColor) + timeStr, Reset}
 	return strings.Join(colored, " ")
 }
 
 // when we list out any subdirectories, print those paths conspicuously above the contents
 // this helps with visual separation
-func printFolderHeader(path string) {
+func printFolderHeader(pathStr string) {
 	colors := ConfigColor["folderHeader"]
 	headerString := colors["arrow"] + "►" + colors["main"] + " "
-	prettyPath := prettifyPath(path)
+	prettyPath := prettifyPath(pathStr)
 
 	if prettyPath == "/" {
 		headerString += "/"
@@ -355,8 +379,8 @@ func printFolderHeader(path string) {
 	fmt.Println(headerString + " " + Reset)
 }
 
-func prettifyPath(path string) string {
-	prettyPath, err := filepath.Abs(path)
+func prettifyPath(pathStr string) string {
+	prettyPath, err := filepath.Abs(pathStr)
 	check(err)
 	pwd := os.Getenv("PWD")
 	home := os.Getenv("HOME")
@@ -393,6 +417,24 @@ func getOwnerAndGroupColors(owner string, group string) (string, string) {
 		groupColor = PermsColor["group"]["_default"]
 	}
 	return ownerColor, groupColor
+}
+
+func printStats(numFiles, numDirs int) {
+	colors := ConfigColor["stats"]
+	end := time.Now().UnixNano()
+	microSeconds := (end - start) / int64(time.Microsecond)
+	milliSeconds := float64(microSeconds) / 1000
+	statStrings := []string{
+		colors["text"],
+		colors["number"] + strconv.Itoa(numDirs),
+		colors["text"] + "dirs",
+		colors["number"] + strconv.Itoa(numFiles),
+		colors["text"] + "files",
+		colors["ms"] + fmt.Sprintf("%.2f", milliSeconds),
+		colors["text"] + "ms",
+		Reset,
+	}
+	fmt.Println(strings.Join(statStrings, " "))
 }
 
 // Go doesn't provide a `Max` function for ints like it does for floats (wtf?)
