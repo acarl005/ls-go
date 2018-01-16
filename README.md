@@ -28,3 +28,7 @@ Of course, you can use an alias to save some typing and get your favorite option
 
 ![demo-2](./img/demo-2.png)
 
+### Prior Art
+
+This is inspired by [monsterkodi/color-ls](https://github.com/monsterkodi/color-ls), ported to Go, with various modifications.
+
