@@ -28,6 +28,33 @@ Of course, you can use an alias to save some typing and get your favorite option
 
 ![demo-2](./img/demo-2.png)
 
+```
+usage: ls-go [<flags>] [<paths>...]
+
+Flags:
+  -h, --help       Show context-sensitive help (also try --help-long and --help-man).
+  -a, --all        show hidden files
+  -b, --bytes      include size
+  -m, --mdate      include modification date
+  -o, --owner      include owner and group
+  -p, --perms      include permissions for owner, group, and other
+  -l, --long       include size, date, owner, and permissions
+  -d, --dirs       only show directories
+  -f, --files      only show files
+  -L, --links      show paths for symlinks
+  -R, --link-rel   show symlinks as relative paths if shorter than absolute path
+  -s, --size       sort items by size
+  -t, --time       sort items by time
+  -k, --kind       sort items by extension
+  -S, --stats      show statistics
+  -i, --icons      show folder icon before dirs
+  -r, --recurse    traverse all dirs recursively
+  -F, --find=FIND  filter items with a regexp
+
+Args:
+  [<paths>]  the files(s) and/or folder(s) to display
+```
+
 ### Prior Art
 
 This is inspired by [monsterkodi/color-ls](https://github.com/monsterkodi/color-ls), ported to Go, with various modifications.
