@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/acarl005/textcol"
 	"github.com/willf/pad"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
@@ -163,9 +164,17 @@ func listFiles(parentDir string, items *[]os.FileInfo) {
 		displayItem.basename = basename
 
 		if fileInfo.IsDir() {
-			dirs = append(dirs, &displayItem)
+			if *args.files {
+				continue
+			} else {
+				dirs = append(dirs, &displayItem)
+			}
 		} else {
-			files = append(files, &displayItem)
+			if *args.dirs {
+				continue
+			} else {
+				files = append(files, &displayItem)
+			}
 		}
 
 		if fileInfo.Mode()&os.ModeSymlink != 0 {
@@ -203,32 +212,30 @@ func listFiles(parentDir string, items *[]os.FileInfo) {
 		}
 	}
 
-	if !*args.files {
-		if *args.sortTime {
-			sort.Sort(ByTime(dirs))
-		}
-
-		for _, dir := range dirs {
-			fmt.Println(dir.display)
-		}
+	if *args.sortTime {
+		sort.Sort(ByTime(dirs))
+		sort.Sort(ByTime(files))
 	}
 
-	if !*args.dirs {
-		if *args.sortSize {
-			sort.Sort(BySize(files))
-		}
+	if *args.sortSize {
+		sort.Sort(BySize(files))
+	}
 
-		if *args.sortTime {
-			sort.Sort(ByTime(files))
-		}
+	if *args.sortKind {
+		sort.Sort(ByKind(files))
+	}
 
-		if *args.sortKind {
-			sort.Sort(ByKind(files))
+	allItems := append(dirs, files...)
+	if *args.bytes || *args.mdate || *args.owner || *args.perms || *args.long {
+		for _, item := range allItems {
+			fmt.Println(item.display)
 		}
-
-		for _, file := range files {
-			fmt.Println(file.display)
+	} else {
+		strs := []string{}
+		for _, item := range allItems {
+			strs = append(strs, item.display)
 		}
+		textcol.PrintColumns(&strs, 2)
 	}
 
 	if *args.stats {
@@ -446,7 +453,6 @@ func max(a int, b int) int {
 }
 
 func check(err error) {
-	// TODO: handle no permission error, broken links, invalid path args
 	if err != nil {
 		panic(err)
 	}
