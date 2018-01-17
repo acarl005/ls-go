@@ -56,7 +56,12 @@ func main() {
 	files := []os.FileInfo{}
 	for _, pathStr := range *args.paths {
 		fileStat, err := os.Stat(pathStr)
-		check(err)
+		if err != nil && strings.Contains(err.Error(), "no such file or directory") {
+			printErrorHeader(err, prettifyPath(pathStr))
+			continue
+		} else {
+			check(err)
+		}
 		if fileStat.IsDir() {
 			dirs = append(dirs, pathStr)
 		} else {
@@ -67,7 +72,7 @@ func main() {
 	// list files first
 	if len(files) > 0 {
 		pwd := os.Getenv("PWD")
-		listFiles(pwd, &files)
+		listFiles(pwd, &files, true)
 	}
 
 	// then list the contents of each directory
@@ -85,8 +90,7 @@ func listDir(pathStr string) {
 	// if we couldn'r read the file, print a "header" with error message and use error-looking colors
 	if err != nil {
 		if strings.Contains(err.Error(), "no such file or directory") || strings.Contains(err.Error(), "permission denied") {
-			fmt.Println(ConfigColor["folderHeader"]["error"] + "► " + prettifyPath(pathStr) + Reset)
-			fmt.Println(err.Error())
+			printErrorHeader(err, prettifyPath(pathStr))
 			return
 		} else {
 			check(err)
@@ -112,7 +116,7 @@ func listDir(pathStr string) {
 	}
 
 	if len(items) > 0 {
-		listFiles(pathStr, &items)
+		listFiles(pathStr, &items, false)
 	}
 
 	if *args.recurse {
@@ -125,7 +129,7 @@ func listDir(pathStr string) {
 	}
 }
 
-func listFiles(parentDir string, items *[]os.FileInfo) {
+func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 	absPath, err := filepath.Abs(parentDir)
 	check(err)
 
@@ -151,7 +155,7 @@ func listFiles(parentDir string, items *[]os.FileInfo) {
 		// if this is a dotfile (hidden file)
 		if fileInfo.Name()[0] == '.' {
 			// we can skip everything with this file if we aren't using the `all` option
-			if !*args.all {
+			if !*args.all && !forceDotfiles {
 				continue
 			}
 			ext = fileInfo.Name()[1:]
@@ -405,6 +409,11 @@ func printFolderHeader(pathStr string) {
 	}
 
 	fmt.Println(headerString + " " + Reset)
+}
+
+func printErrorHeader(err error, pathStr string) {
+	fmt.Println(ConfigColor["folderHeader"]["error"] + "► " + pathStr + Reset)
+	fmt.Println(err.Error())
 }
 
 func prettifyPath(pathStr string) string {
