@@ -3,7 +3,7 @@
 A more colorful, user-friendly implementation of `ls` written in [Go](https://golang.org/).
 
 You want to be able to glean a lot of information as quickly as possible from `ls`.
-Colors can help, your mind parse the information.
+Colors can help your mind parse the information.
 You can configure `ls` to color the output a little bit.
 Configuring `ls` is a hassle though, and the colors are limited.
 
@@ -68,7 +68,7 @@ Args:
 ### Nerd Font Support
 
 `ls-go` works with [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts).
-Simply add `--nerd-font` or `-n` to get file specific icons.
+Simply add `--nerd-font` or `-n` to get file-specific icons.
 This won't work unless you have a Nerd Font installed and selected in your terminal emulator.
 
 ![demo-4](./img/demo-4.png)
