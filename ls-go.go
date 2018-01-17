@@ -117,7 +117,7 @@ func listDir(pathStr string) {
 
 	if *args.recurse {
 		for _, item := range items {
-			if item.IsDir() {
+			if item.IsDir() && (item.Name()[0] != '.' || *args.all) {
 				fmt.Println("") // put a blank line between directories
 				listDir(path.Join(pathStr, item.Name()))
 			}
@@ -301,12 +301,16 @@ func fileString(item *DisplayItem) string {
 	if ext != "" {
 		ext = "." + ext
 	}
-	execIcon := ""
-	executable := isExecutableScript(item)
-	if executable && *args.icons {
-		execIcon = BgGray(1) + FgRGB(0, 5, 0) + ">_" + Reset + " "
+	icon := ""
+	if *args.nerdfont {
+		icon = colors[0] + getIconForFile(item.basename, item.ext) + " "
+	} else if *args.icons {
+		executable := isExecutableScript(item)
+		if executable {
+			icon = BgGray(1) + FgRGB(0, 5, 0) + ">_" + Reset + " "
+		}
 	}
-	displayStrings := []string{execIcon, colors[0], item.basename, colors[1], ext, Reset}
+	displayStrings := []string{icon, colors[0], item.basename, colors[1], ext, Reset}
 	return strings.Join(displayStrings, "")
 }
 
@@ -329,9 +333,15 @@ func dirString(item *DisplayItem) string {
 	if item.basename == "" {
 		colors = ConfigColor[".dir"]
 	}
-	displayStrings := []string{colors["name"], " "}
+	displayStrings := []string{colors["name"]}
+	icon := ""
 	if *args.icons {
 		displayStrings = append(displayStrings, "📂 ")
+	} else if *args.nerdfont {
+		icon = getIconForFolder(item.info.Name()) + " "
+		displayStrings = append(displayStrings, icon)
+	} else {
+		displayStrings = append(displayStrings, " ")
 	}
 	ext := item.ext
 	if ext != "" {

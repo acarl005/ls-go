@@ -24,6 +24,7 @@ type arguments struct {
 	sortKind *bool
 	stats    *bool
 	icons    *bool
+	nerdfont *bool
 	recurse  *bool
 	find     *string
 }
@@ -45,6 +46,7 @@ var args = arguments{
 	kingpin.Flag("kind", "sort items by extension").Short('k').Bool(),
 	kingpin.Flag("stats", "show statistics").Short('S').Bool(),
 	kingpin.Flag("icons", "show folder icon before dirs").Short('i').Bool(),
+	kingpin.Flag("nerd-font", "show nerd font glyphs before file names").Short('n').Bool(),
 	kingpin.Flag("recurse", "traverse all dirs recursively").Short('r').Bool(),
 	kingpin.Flag("find", "filter items with a regexp").Short('F').String(),
 }

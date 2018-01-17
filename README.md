@@ -28,6 +28,15 @@ Of course, you can use an alias to save some typing and get your favorite option
 
 ![demo-2](./img/demo-2.png)
 
+Show locations of symlink.
+
+![demo-3](./img/demo-3.png)
+
+List subdirectories recursively.
+
+![demo-5](./img/demo-5.png)
+
+
 ```
 usage: ls-go [<flags>] [<paths>...]
 
@@ -48,6 +57,7 @@ Flags:
   -k, --kind       sort items by extension
   -S, --stats      show statistics
   -i, --icons      show folder icon before dirs
+  -n, --nerd-font  show nerd font glyphs before file names
   -r, --recurse    traverse all dirs recursively
   -F, --find=FIND  filter items with a regexp
 
@@ -55,7 +65,15 @@ Args:
   [<paths>]  the files(s) and/or folder(s) to display
 ```
 
+### Nerd Font Support
+
+`ls-go` works with [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts).
+Simply add `--nerd-font` or `-n` to get file specific icons.
+This won't work unless you have a Nerd Font installed and selected in your terminal emulator.
+
+![demo-4](./img/demo-4.png)
+
 ### Prior Art
 
-This is inspired by [monsterkodi/color-ls](https://github.com/monsterkodi/color-ls), ported to Go, with various modifications.
+This is inspired by [athityakumar/colorls](https://github.com/athityakumar/colorls) and [monsterkodi/color-ls](https://github.com/monsterkodi/color-ls), ported to Go, with various modifications.
 
