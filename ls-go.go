@@ -385,7 +385,7 @@ func permString(info os.FileInfo, ownerColor string, groupColor string) string {
 	coloredStrings := []string{defaultColor, modeString[0:1]}
 	coloredStrings = append(coloredStrings, ownerColor+modeString[1:4])
 	coloredStrings = append(coloredStrings, groupColor+modeString[4:7])
-	coloredStrings = append(coloredStrings, defaultColor+modeString[7:], Reset, Reset)
+	coloredStrings = append(coloredStrings, defaultColor+modeString[7:10], Reset, Reset)
 	return strings.Join(coloredStrings, " ")
 }
 
