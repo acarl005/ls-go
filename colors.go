@@ -71,6 +71,7 @@ var (
 		"bash":      [2]string{Bold + FgRGB(4, 0, 4), FgRGB(2, 0, 2)},
 		"zsh":       [2]string{Bold + FgRGB(4, 0, 4), FgRGB(2, 0, 2)},
 		"py":        [2]string{Bold + FgRGB(0, 3, 0), FgRGB(0, 1, 0)},
+		"ipynb":     [2]string{Bold + FgRGB(0, 3, 0), FgRGB(0, 1, 0)},
 		"pyc":       [2]string{FgGray(8), FgGray(5)},
 		"rb":        [2]string{Bold + FgRGB(5, 1, 0), FgRGB(3, 1, 0)},
 		"go":        [2]string{Bold + Fg(121), Fg(109)},

@@ -147,6 +147,7 @@ var aliases = map[string]string{
 	"gslides":          "ppt",
 	"pptx":             "ppt",
 	"pyc":              "py",
+	"ipynb":            "py",
 	"rdata":            "r",
 	"rds":              "r",
 	"gemfile":          "rb",
