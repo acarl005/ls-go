@@ -61,4 +61,7 @@ func argsPostParse() {
 	if *args.dirs && *args.files {
 		log.Fatal("--dirs and --files cannot both be set")
 	}
+	if *args.nerdfont && *args.icons {
+		log.Fatal("--nerd-font and --icons cannot both be set")
+	}
 }

@@ -263,7 +263,12 @@ func getLinkInfo(item *DisplayItem, absPath string) {
 	if *args.linkRel {
 		linkRel, _ := filepath.Rel(absPath, linkPath)
 		if linkRel != "" && len(linkRel) <= len(linkPath) {
-			linkPath = linkRel
+			// i prefer the look of these relative paths prepended with ./
+			if linkRel[0] != '.' {
+				linkPath = "./" + linkRel
+			} else {
+				linkPath = linkRel
+			}
 		}
 	}
 	link := LinkInfo{
@@ -283,7 +288,18 @@ func linkString(item *DisplayItem, absPath string) string {
 	if item.link.info == nil {
 		displayStrings = append(displayStrings, colors["broken"]+item.link.path+Reset)
 	} else {
-		displayStrings = append(displayStrings, colors["path"]+item.link.path+Reset)
+		// check for the various different ways we display links
+		if item.link.info.IsDir() {
+			if *args.icons {
+				displayStrings = append(displayStrings, colors["path"]+"📂 "+item.link.path+"/"+Reset)
+			} else if *args.nerdfont {
+				displayStrings = append(displayStrings, colors["path"]+getIconForFolder(item.info.Name())+" "+item.link.path+"/"+Reset)
+			} else {
+				displayStrings = append(displayStrings, colors["path"]+item.link.path+"/"+Reset)
+			}
+		} else {
+			displayStrings = append(displayStrings, colors["path"]+item.link.path+Reset)
+		}
 	}
 	return strings.Join(displayStrings, " ")
 }
@@ -305,11 +321,19 @@ func fileString(item *DisplayItem) string {
 	if ext != "" {
 		ext = "." + ext
 	}
+
+	// in some cases files have icons if front
+	// if nerd font enabled, then it'll be a file-specific icon, or if its an executable script, a little shell icon
+	// if the regular --icons flag is used instead, then it will show a ">_" only if the file is executable
 	icon := ""
+	executable := isExecutableScript(item)
 	if *args.nerdfont {
-		icon = colors[0] + getIconForFile(item.basename, item.ext) + " "
+		if executable {
+			icon = colors[0] + getIconForFile("", "shell") + " "
+		} else {
+			icon = colors[0] + getIconForFile(item.basename, item.ext) + " "
+		}
 	} else if *args.icons {
-		executable := isExecutableScript(item)
 		if executable {
 			icon = BgGray(1) + FgRGB(0, 5, 0) + ">_" + Reset + " "
 		}
