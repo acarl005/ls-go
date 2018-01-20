@@ -236,6 +236,10 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 	// combine the items together again after sorting
 	allItems := append(dirs, files...)
 
+	if *args.backwards {
+		reverse(allItems)
+	}
+
 	// if using "long" display, just print one item per line
 	if *args.bytes || *args.mdate || *args.owner || *args.perms || *args.long {
 		for _, item := range allItems {
