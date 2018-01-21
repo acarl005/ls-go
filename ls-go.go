@@ -32,14 +32,13 @@ type LinkInfo struct {
 	info os.FileInfo
 }
 
-// configure the arguments
 var (
-	True             = true
+	True             = true // a helper varable to help make pointers to `true`
 	sizeUnits        = []string{" B", "kB", "MB", "GB", "TB"}
-	dateFormat       = "02.Jan'06"
+	dateFormat       = "02.Jan'06" // uses the "reference time" https://golang.org/pkg/time/#Time.Format
 	timeFormat       = "15:04:05"
-	start      int64 = 0
-	stdout           = colorable.NewColorableStdout()
+	start      int64 = 0                              // keep track of execution time
+	stdout           = colorable.NewColorableStdout() // write to this to allow ANSI color codes to be compatible on Windows
 )
 
 func main() {
@@ -139,7 +138,7 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 	files := []*DisplayItem{}
 	dirs := []*DisplayItem{}
 
-	// to help with formatting, we need to know the length of the longest name
+	// to help with formatting, we need to know the length of the longest name to add appropriate padding
 	longestOwnerName := 0
 	longestGroupName := 0
 	if *args.owner {
@@ -309,19 +308,19 @@ func linkString(item *DisplayItem, absPath string) string {
 }
 
 func fileString(item *DisplayItem) string {
-	ext := strings.ToLower(item.ext)
-	var colors [2]string
+	key := strings.ToLower(item.ext)
 	// figure out which color to choose
-	if MediaTypes.Has(ext) {
-		colors = FileColor["_media"]
-	} else if CompressTypes.Has(ext) {
-		colors = FileColor["_compress"]
-	} else if val, hasExt := FileColor[ext]; hasExt {
-		colors = val
-	} else {
-		colors = FileColor["_default"]
+	colors := FileColor["_default"]
+	alias, hasAlias := FileAliases[key]
+	if hasAlias {
+		key = alias
 	}
-	ext = item.ext
+	betterColor, hasBetterColor := FileColor[key]
+	if hasBetterColor {
+		colors = betterColor
+	}
+
+	ext := item.ext
 	if ext != "" {
 		ext = "." + ext
 	}

@@ -13,11 +13,21 @@ It has much fewer flags so you can get the behavior you want more easily.
 The colors are beautiful and semantic.
 A terminal with xterm-256 colors is **required*.*
 
+## Features
+
+- [x] *Should* work on Linux, MacOS, and Windows.
+- [x] Outputs beautiful, semantic colors by default.
+- [x] Show paths to symlinks, and explicitly show broken links.
+- [x] Recurse down subdirectories.
+- [x] Emojis (if you're into that).
+- [x] Supports [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts).
+
 
 ## Install
 
 ```sh
-$ go get github.com/acarl005/ls-go
+# do this once in a while
+$ go get -u github.com/acarl005/ls-go
 ```
 
 ## Usage
@@ -76,4 +86,13 @@ This won't work unless you have a Nerd Font installed and selected in your termi
 ### Prior Art
 
 This is inspired by [athityakumar/colorls](https://github.com/athityakumar/colorls) and [monsterkodi/color-ls](https://github.com/monsterkodi/color-ls), ported to Go, with various modifications.
+
+## Contributing
+
+Contributions are muchly appreciated!
+Want to add a glyph for another file type?
+Did I forget an edge case?
+Is there another option that would be useful?
+Submit a PR!
+You might want to submit an issue first to make sure it's something I'd want to add though.
 
