@@ -199,7 +199,9 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 		}
 
 		if *args.owner {
-			ownerInfo := []string{Reset + ownerColor + owner, groupColor + group, Reset}
+			paddedOwner := pad.Right(owner, longestOwnerName, " ")
+			paddedGroup := pad.Right(group, longestGroupName, " ")
+			ownerInfo := []string{Reset + ownerColor + paddedOwner, groupColor + paddedGroup, Reset}
 			displayItem.display += strings.Join(ownerInfo, " ")
 		}
 
