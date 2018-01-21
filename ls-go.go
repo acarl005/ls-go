@@ -5,17 +5,16 @@ import (
 	"io/ioutil"
 	"math"
 	"os"
-	"os/user"
 	"path"
 	"path/filepath"
 	"regexp"
 	"sort"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/acarl005/textcol"
+	"github.com/mattn/go-colorable"
 	"github.com/willf/pad"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
@@ -40,9 +39,12 @@ var (
 	dateFormat       = "02.Jan'06"
 	timeFormat       = "15:04:05"
 	start      int64 = 0
+	stdout           = colorable.NewColorableStdout()
 )
 
 func main() {
+	textcol.Output = stdout
+
 	start = time.Now().UnixNano()
 	// auto-generate help text for the command with -h
 	kingpin.CommandLine.HelpFlag.Short('h')
@@ -79,7 +81,7 @@ func main() {
 	for i, dir := range dirs {
 		// print a blank line between directories, but not before the first one
 		if i > 0 {
-			fmt.Println("")
+			fmt.Fprintln(stdout, "")
 		}
 		listDir(dir)
 	}
@@ -122,7 +124,7 @@ func listDir(pathStr string) {
 	if *args.recurse {
 		for _, item := range items {
 			if item.IsDir() && (item.Name()[0] != '.' || *args.all) {
-				fmt.Println("") // put a blank line between directories
+				fmt.Fprintln(stdout, "") // put a blank line between directories
 				listDir(path.Join(pathStr, item.Name()))
 			}
 		}
@@ -197,7 +199,9 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 		}
 
 		if *args.owner {
-			ownerInfo := []string{Reset + ownerColor + owner, groupColor + group, Reset}
+			paddedOwner := pad.Right(owner, longestOwnerName, " ")
+			paddedGroup := pad.Right(group, longestGroupName, " ")
+			ownerInfo := []string{Reset + ownerColor + paddedOwner, groupColor + paddedGroup, Reset}
 			displayItem.display += strings.Join(ownerInfo, " ")
 		}
 
@@ -239,7 +243,7 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 	// if using "long" display, just print one item per line
 	if *args.bytes || *args.mdate || *args.owner || *args.perms || *args.long {
 		for _, item := range allItems {
-			fmt.Println(item.display)
+			fmt.Fprintln(stdout, item.display)
 		}
 	} else {
 		// but if not, try to format in columns, link `ls` would
@@ -432,12 +436,12 @@ func printFolderHeader(pathStr string) {
 		headerString += strings.Join(coloredFolders, colors["slash"]+"/")
 	}
 
-	fmt.Println(headerString + " " + Reset)
+	fmt.Fprintln(stdout, headerString+" "+Reset)
 }
 
 func printErrorHeader(err error, pathStr string) {
-	fmt.Println(ConfigColor["folderHeader"]["error"] + "► " + pathStr + Reset)
-	fmt.Println(err.Error())
+	fmt.Fprintln(stdout, ConfigColor["folderHeader"]["error"]+"► "+pathStr+Reset)
+	fmt.Fprintln(stdout, err.Error())
 }
 
 func prettifyPath(pathStr string) string {
@@ -452,17 +456,6 @@ func prettifyPath(pathStr string) string {
 		prettyPath = "~" + prettyPath[len(home):]
 	}
 	return prettyPath
-}
-
-func getOwnerAndGroup(fileInfo *os.FileInfo) (string, string) {
-	stat_t := (*fileInfo).Sys().(*syscall.Stat_t)
-	uid := fmt.Sprint(stat_t.Uid)
-	gid := fmt.Sprint(stat_t.Gid)
-	owner, err := user.LookupId(uid)
-	check(err)
-	group, err := user.LookupGroupId(gid)
-	check(err)
-	return owner.Username, group.Name
 }
 
 func getOwnerAndGroupColors(owner string, group string) (string, string) {
@@ -495,7 +488,7 @@ func printStats(numFiles, numDirs int) {
 		colors["text"] + "ms",
 		Reset,
 	}
-	fmt.Println(strings.Join(statStrings, " "))
+	fmt.Fprintln(stdout, strings.Join(statStrings, " "))
 }
 
 // Go doesn't provide a `Max` function for ints like it does for floats (wtf?)
