@@ -223,22 +223,28 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 	if *args.sortTime {
 		sort.Sort(ByTime(dirs))
 		sort.Sort(ByTime(files))
+		if *args.backwards {
+			reverse(dirs)
+			reverse(files)
+		}
 	}
 
 	if *args.sortSize {
 		sort.Sort(BySize(files))
+		if *args.backwards {
+			reverse(files)
+		}
 	}
 
 	if *args.sortKind {
 		sort.Sort(ByKind(files))
+		if *args.backwards {
+			reverse(files)
+		}
 	}
 
 	// combine the items together again after sorting
 	allItems := append(dirs, files...)
-
-	if *args.backwards {
-		reverse(allItems)
-	}
 
 	// if using "long" display, just print one item per line
 	if *args.bytes || *args.mdate || *args.owner || *args.perms || *args.long {
