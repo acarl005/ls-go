@@ -36,7 +36,7 @@ var (
 	True             = true // a helper varable to help make pointers to `true`
 	sizeUnits        = []string{" B", "kB", "MB", "GB", "TB"}
 	dateFormat       = "02.Jan'06" // uses the "reference time" https://golang.org/pkg/time/#Time.Format
-	timeFormat       = "15:04:05"
+	timeFormat       = "15:04"
 	start      int64 = 0                              // keep track of execution time
 	stdout           = colorable.NewColorableStdout() // write to this to allow ANSI color codes to be compatible on Windows
 )
