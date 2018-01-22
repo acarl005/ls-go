@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"github.com/acarl005/textcol"
-	"github.com/mattn/go-colorable"
+	colorable "github.com/mattn/go-colorable"
 	"github.com/willf/pad"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
@@ -382,13 +382,62 @@ func dirString(item *DisplayItem) string {
 	return strings.Join(displayStrings, "")
 }
 
+func rwxString(mode os.FileMode, i uint, color string) string {
+	bits := mode >> (i * 3)
+	coloredStrings := []string{color}
+	if bits&4 != 0 {
+		coloredStrings = append(coloredStrings, "r")
+	} else {
+		coloredStrings = append(coloredStrings, "-")
+	}
+	if bits&2 != 0 {
+		coloredStrings = append(coloredStrings, "w")
+	} else {
+		coloredStrings = append(coloredStrings, "-")
+	}
+	if i == 0 && mode&os.ModeSticky != 0 {
+		if bits&1 != 0 {
+			coloredStrings = append(coloredStrings, "t")
+		} else {
+			coloredStrings = append(coloredStrings, "T")
+		}
+	} else {
+		if bits&1 != 0 {
+			coloredStrings = append(coloredStrings, "x")
+		} else {
+			coloredStrings = append(coloredStrings, "-")
+		}
+	}
+	return strings.Join(coloredStrings, "")
+}
+
+// generates the permissions string, ya know like "drwxr-xr-x" and stuff like that
 func permString(info os.FileInfo, ownerColor string, groupColor string) string {
 	defaultColor := PermsColor["other"]["_default"]
-	modeString := info.Mode().String()
-	coloredStrings := []string{defaultColor, modeString[0:1]}
-	coloredStrings = append(coloredStrings, ownerColor+modeString[1:4])
-	coloredStrings = append(coloredStrings, groupColor+modeString[4:7])
-	coloredStrings = append(coloredStrings, defaultColor+modeString[7:10], Reset, Reset)
+
+	// info.Mode().String() does not produce the same output as `ls`, so we must build that string manually
+	mode := info.Mode()
+	// this "type" is not the file extension, but type as far as the OS is concerned
+	filetype := "-"
+	if mode&os.ModeDir != 0 {
+		filetype = "d"
+	} else if mode&os.ModeSymlink != 0 {
+		filetype = "l"
+	} else if mode&os.ModeDevice != 0 {
+		if mode&os.ModeCharDevice == 0 {
+			filetype = "b" // block device
+		} else {
+			filetype = "c" // character device
+		}
+	} else if mode&os.ModeNamedPipe != 0 {
+		filetype = "p"
+	} else if mode&os.ModeSocket != 0 {
+		filetype = "s"
+	}
+	coloredStrings := []string{defaultColor, filetype}
+	coloredStrings = append(coloredStrings, rwxString(mode, 2, ownerColor))
+	coloredStrings = append(coloredStrings, rwxString(mode, 1, groupColor))
+	coloredStrings = append(coloredStrings, rwxString(mode, 0, defaultColor), Reset, Reset)
 	return strings.Join(coloredStrings, " ")
 }
 

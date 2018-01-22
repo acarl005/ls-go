@@ -126,6 +126,7 @@ var (
 		"tgz":      "compress",
 		"zip":      "compress",
 		"rar":      "compress",
+		"pdf":      "compress",
 	}
 	SizeColor = map[string]string{
 		" B": Fg(27),
