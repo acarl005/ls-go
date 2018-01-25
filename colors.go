@@ -7,6 +7,9 @@ import (
 	"strings"
 )
 
+// see the color codes
+// http://i.stack.imgur.com/UQVe5.png
+
 func Fg(code int) string {
 	colored := []string{"\x1b[38;5;", strconv.Itoa(code), "m"}
 	return strings.Join(colored, "")
@@ -65,7 +68,7 @@ var (
 		"plist":    [2]string{FgRGB(4, 0, 4), FgRGB(2, 0, 2)},
 		"sh":       [2]string{FgRGB(4, 0, 4), FgRGB(2, 0, 2)},
 		"py":       [2]string{FgRGB(0, 3, 0), FgRGB(0, 1, 0)},
-		"pyc":      [2]string{FgGray(8), FgGray(5)},
+		"compiled": [2]string{FgGray(8), FgGray(5)},
 		"rb":       [2]string{FgRGB(5, 1, 0), FgRGB(3, 1, 1)},
 		"go":       [2]string{Fg(121), Fg(109)},
 		"scala":    [2]string{Fg(124), Fg(52)},
@@ -88,6 +91,7 @@ var (
 		"xml":      [2]string{Fg(87), Fg(73)},
 		"css":      [2]string{Fg(219), Fg(207)},
 		"compress": [2]string{FgRGB(5, 0, 0), FgRGB(3, 0, 0)},
+		"document": [2]string{FgRGB(5, 0, 0), FgRGB(3, 0, 0)},
 		"media":    [2]string{Fg(141), Fg(99)},
 		"_default": [2]string{FgGray(23), FgGray(12)},
 	}
@@ -109,11 +113,30 @@ var (
 		"ico":      "media",
 		"svg":      "media",
 		"webp":     "media",
+		"bmp":      "media",
+		"ppm":      "media",
+		"pgm":      "media",
+		"pbm":      "media",
+		"pnm":      "media",
+		"stl":      "media",
+		"eps":      "media",
+		"cbr":      "media",
+		"cbz":      "media",
+		"xpm":      "media",
+		"orf":      "media",
+		"nef":      "media",
 		"tiff":     "media",
 		"pxm":      "media",
 		"mp3":      "media",
 		"m4a":      "media",
 		"wav":      "media",
+		"flac":     "media",
+		"alac":     "media",
+		"aac":      "media",
+		"ogg":      "media",
+		"wma":      "media",
+		"mka":      "media",
+		"opus":     "media",
 		"webm":     "media",
 		"avi":      "media",
 		"wmv":      "media",
@@ -121,12 +144,49 @@ var (
 		"mp4":      "media",
 		"flv":      "media",
 		"mov":      "media",
+		"m2v":      "media",
+		"mpeg":     "media",
+		"mpg":      "media",
+		"ogm":      "media",
+		"ogv":      "media",
+		"vob":      "media",
+		"Z":        "compress",
+		"z":        "compress",
+		"bz2":      "compress",
+		"7z":       "compress",
+		"iso":      "compress",
+		"dmg":      "compress",
+		"tc":       "compress",
+		"par":      "compress",
+		"xz":       "compress",
+		"txz":      "compress",
+		"lzma":     "compress",
+		"deb":      "compress",
+		"rpm":      "compress",
 		"tar":      "compress",
 		"gz":       "compress",
 		"tgz":      "compress",
 		"zip":      "compress",
 		"rar":      "compress",
-		"pdf":      "compress",
+		"pdf":      "document",
+		"djvu":     "document",
+		"doc":      "document",
+		"docx":     "document",
+		"dvi":      "document",
+		"eml":      "document",
+		"fotd":     "document",
+		"odp":      "document",
+		"odt":      "document",
+		"ppt":      "document",
+		"pptx":     "document",
+		"rtf":      "document",
+		"xls":      "document",
+		"xlsx":     "document",
+		"pyc":      "compiled",
+		"class":    "compiled",
+		"elc":      "compiled",
+		"o":        "compiled",
+		"hi":       "compiled",
 	}
 	SizeColor = map[string]string{
 		" B": Fg(27),
@@ -137,11 +197,11 @@ var (
 	}
 	ConfigColor = map[string]map[string]string{
 		"dir": map[string]string{
-			"name": BgRGB(0, 0, 2) + FgGray(23),
+			"name": Bold + BgRGB(0, 0, 2) + FgGray(23),
 			"ext":  FgRGB(2, 2, 5),
 		},
 		".dir": map[string]string{
-			"name": BgRGB(0, 0, 1) + FgGray(23),
+			"name": Bold + BgRGB(0, 0, 1) + FgGray(23),
 			"ext":  FgRGB(2, 2, 5),
 		},
 		"folderHeader": map[string]string{
@@ -152,9 +212,19 @@ var (
 			"error":      BgRGB(5, 0, 0) + FgRGB(5, 5, 0),
 		},
 		"link": map[string]string{
+			"name":   Bold + FgRGB(0, 5, 0),
 			"arrow":  FgRGB(1, 0, 1),
 			"path":   FgRGB(4, 0, 4),
 			"broken": BgRGB(5, 0, 0) + FgRGB(5, 5, 0),
+		},
+		"device": map[string]string{
+			"name": Bold + BgGray(3) + Fg(220),
+		},
+		"socket": map[string]string{
+			"name": Bold + Bg(53) + Fg(15),
+		},
+		"pipe": map[string]string{
+			"name": Bold + Bg(94) + Fg(15),
 		},
 		"stats": map[string]string{
 			"text":   BgGray(2) + FgGray(15),

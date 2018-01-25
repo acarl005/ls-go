@@ -28,8 +28,9 @@ type DisplayItem struct {
 }
 
 type LinkInfo struct {
-	path string
-	info os.FileInfo
+	path   string
+	info   os.FileInfo
+	broken bool
 }
 
 var (
@@ -88,7 +89,7 @@ func main() {
 
 func listDir(pathStr string) {
 	items, err := ioutil.ReadDir(pathStr)
-	// if we couldn'r read the file, print a "header" with error message and use error-looking colors
+	// if we couldn't read the folder, print a "header" with error message and use error-looking colors
 	if err != nil {
 		if strings.Contains(err.Error(), "no such file or directory") || strings.Contains(err.Error(), "permission denied") {
 			printErrorHeader(err, prettifyPath(pathStr))
@@ -150,26 +151,21 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 	}
 
 	for _, fileInfo := range *items {
-		displayItem := DisplayItem{info: fileInfo}
-
-		var basename, ext string
 		// if this is a dotfile (hidden file)
 		if fileInfo.Name()[0] == '.' {
 			// we can skip everything with this file if we aren't using the `all` option
 			if !*args.all && !forceDotfiles {
 				continue
 			}
-			ext = fileInfo.Name()[1:]
-			basename = ""
-		} else {
-			ext = filepath.Ext(fileInfo.Name())
-			basename = fileInfo.Name()[:len(fileInfo.Name())-len(ext)]
-			if ext != "" {
-				ext = ext[1:]
-			}
 		}
-		displayItem.ext = ext
-		displayItem.basename = basename
+
+		basename, ext := splitExt(fileInfo.Name())
+
+		displayItem := DisplayItem{
+			info:     fileInfo,
+			ext:      ext,
+			basename: basename,
+		}
 
 		if fileInfo.IsDir() {
 			if *args.files {
@@ -212,11 +208,7 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 			displayItem.display += timeString(fileInfo.ModTime())
 		}
 
-		if fileInfo.IsDir() {
-			displayItem.display += dirString(&displayItem)
-		} else {
-			displayItem.display += fileString(&displayItem)
-		}
+		displayItem.display += nameString(&displayItem)
 
 		if *args.links && fileInfo.Mode()&os.ModeSymlink != 0 {
 			displayItem.display += linkString(&displayItem, absPath)
@@ -290,29 +282,59 @@ func getLinkInfo(item *DisplayItem, absPath string) {
 	item.link = &link
 	if linkInfo != nil {
 		link.info = linkInfo
-	} else if !strings.Contains(err2.Error(), "no such file or directory") {
+	} else if strings.Contains(err2.Error(), "no such file or directory") {
+		link.broken = true
+	} else if !strings.Contains(err2.Error(), "permission denied") {
 		check(err2)
 	}
 }
 
+func nameString(item *DisplayItem) string {
+	mode := item.info.Mode()
+	name := item.info.Name()
+	if mode&os.ModeDir != 0 {
+		return dirString(item)
+	} else if mode&os.ModeSymlink != 0 {
+		color := ConfigColor["link"]["name"]
+		if *args.nerdfont {
+			return color + otherIcons["link"] + " " + name + " " + Reset
+		} else if *args.icons {
+			return color + "🔗 " + name + " " + Reset
+		} else {
+			return color + " " + name + " " + Reset
+		}
+	} else if mode&os.ModeDevice != 0 {
+		color := ConfigColor["device"]["name"]
+		if *args.nerdfont {
+			return color + otherIcons["device"] + " " + name + " " + Reset
+		} else if *args.icons {
+			return color + "💽 " + name + " " + Reset
+		} else {
+			return color + " " + name + " " + Reset
+		}
+	} else if mode&os.ModeNamedPipe != 0 {
+		return ConfigColor["pipe"]["name"] + " " + name + " " + Reset
+	} else if mode&os.ModeSocket != 0 {
+		return ConfigColor["socket"]["name"] + " " + name + " " + Reset
+	}
+	return fileString(item)
+}
+
 func linkString(item *DisplayItem, absPath string) string {
 	colors := ConfigColor["link"]
-	displayStrings := []string{colors["arrow"], "►"}
-	if item.link.info == nil {
+	displayStrings := []string{colors["arrow"] + "►"}
+	if item.link.info == nil && item.link.broken {
 		displayStrings = append(displayStrings, colors["broken"]+item.link.path+Reset)
-	} else {
-		// check for the various different ways we display links
-		if item.link.info.IsDir() {
-			if *args.icons {
-				displayStrings = append(displayStrings, colors["path"]+"📂 "+item.link.path+"/"+Reset)
-			} else if *args.nerdfont {
-				displayStrings = append(displayStrings, colors["path"]+getIconForFolder(item.info.Name())+" "+item.link.path+"/"+Reset)
-			} else {
-				displayStrings = append(displayStrings, colors["path"]+item.link.path+"/"+Reset)
-			}
-		} else {
-			displayStrings = append(displayStrings, colors["path"]+item.link.path+Reset)
+	} else if item.link.info != nil {
+		linkname, linkext := splitExt(item.link.path)
+		displayItem := DisplayItem{
+			info:     item.link.info,
+			basename: linkname,
+			ext:      linkext,
 		}
+		displayStrings = append(displayStrings, nameString(&displayItem))
+	} else {
+		displayStrings = append(displayStrings, item.link.path)
 	}
 	return strings.Join(displayStrings, " ")
 }
@@ -357,16 +379,10 @@ func fileString(item *DisplayItem) string {
 
 // check for executable permissions
 func isExecutableScript(item *DisplayItem) bool {
-	executable := false
-	// if its a link, see if the linked file is executable
-	if item.link != nil {
-		if item.link.info != nil {
-			executable = (item.link.info.Mode()&0111) != 0 && !item.link.info.IsDir()
-		}
-	} else if item.info.Mode()&0111 != 0 {
-		executable = true
+	if item.info.Mode()&0111 != 0 && item.info.Mode().IsRegular() {
+		return true
 	}
-	return executable
+	return false
 }
 
 func dirString(item *DisplayItem) string {
@@ -547,6 +563,20 @@ func printStats(numFiles, numDirs int) {
 		Reset,
 	}
 	fmt.Fprintln(stdout, strings.Join(statStrings, " "))
+}
+
+func splitExt(filename string) (basename, ext string) {
+	if filepath.Base(filename)[0] == '.' {
+		ext = filename[1:]
+		basename = ""
+	} else {
+		ext = filepath.Ext(filename)
+		basename = filename[:len(filename)-len(ext)]
+		if ext != "" {
+			ext = ext[1:]
+		}
+	}
+	return
 }
 
 // Go doesn't provide a `Max` function for ints like it does for floats (wtf?)
