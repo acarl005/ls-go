@@ -25,9 +25,17 @@ A terminal with xterm-256 colors is **required*.*
 
 ## Install
 
+With `go get`:
+
 ```sh
 # do this once in a while
 $ go get -u github.com/acarl005/ls-go
+```
+
+With Homebrew:
+
+```sh
+brew install acarl005/homebrew-formulas/ls-go
 ```
 
 ## Usage
