@@ -35,7 +35,7 @@ type LinkInfo struct {
 
 var (
 	True             = true // a helper varable to help make pointers to `true`
-	sizeUnits        = []string{" B", "kB", "MB", "GB", "TB"}
+	sizeUnits        = []string{"B", "K", "M", "G", "T"}
 	dateFormat       = "02.Jan'06" // uses the "reference time" https://golang.org/pkg/time/#Time.Format
 	timeFormat       = "15:04"
 	start      int64 = 0                              // keep track of execution time
@@ -468,10 +468,17 @@ func permString(info os.FileInfo, ownerColor string, groupColor string) string {
 }
 
 func sizeString(size int64) string {
+	sizeFloat := float64(size)
 	for i, unit := range sizeUnits {
-		base := int64(math.Pow(10, float64(i*3)))
-		if size < base*1000 {
-			return SizeColor[unit] + pad.Left(fmt.Sprintf("%d", size/base), 4, " ") + unit + " " + Reset
+		base := math.Pow(1024, float64(i))
+		if sizeFloat < base*1024 {
+			var sizeStr string
+			if i == 0 {
+				sizeStr = strconv.FormatInt(size, 10)
+			} else {
+				sizeStr = fmt.Sprintf("%.2f", sizeFloat/base)
+			}
+			return SizeColor[unit] + pad.Left(sizeStr, 6, " ") + unit + " " + Reset
 		}
 	}
 	return strconv.Itoa(int(size))

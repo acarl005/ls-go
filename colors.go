@@ -189,11 +189,11 @@ var (
 		"hi":       "compiled",
 	}
 	SizeColor = map[string]string{
-		" B": Fg(27),
-		"kB": Fg(33),
-		"MB": Fg(81),
-		"GB": Fg(123),
-		"TB": Fg(159),
+		"B": Fg(27),
+		"K": Fg(33),
+		"M": Fg(81),
+		"G": Fg(123),
+		"T": Fg(159),
 	}
 	ConfigColor = map[string]map[string]string{
 		"dir": map[string]string{
