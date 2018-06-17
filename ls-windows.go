@@ -4,8 +4,13 @@ package main
 
 import (
 	"os"
+	"strconv"
+	"strings"
 	"syscall"
 	"unsafe"
+
+	"github.com/willf/pad"
+	"golang.org/x/sys/windows"
 )
 
 var (
@@ -48,4 +53,13 @@ func getOwnerAndGroup(fileInfo *os.FileInfo) (string, string) {
 		return "", ""
 	}
 	return uid, gid
+}
+
+func deviceNumbers(absPath string) string {
+	stat := syscall.Stat_t{}
+	err := syscall.Stat(absPath, &stat)
+	check(err)
+	major := strconv.FormatInt(int64(windows.Major(uint64(stat.Rdev))), 10)
+	minor := strconv.FormatInt(int64(windows.Minor(uint64(stat.Rdev))), 10)
+	return pad.Left(strings.Join([]string{major, minor}, ","), 7, " ") + " " + Reset
 }

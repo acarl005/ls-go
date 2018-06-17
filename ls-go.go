@@ -201,7 +201,11 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 		}
 
 		if *args.bytes {
-			displayItem.display += sizeString(fileInfo.Size())
+			if fileInfo.Mode()&os.ModeDevice != 0 {
+				displayItem.display += deviceNumbers(path.Join(absPath, fileInfo.Name()))
+			} else {
+				displayItem.display += sizeString(fileInfo.Size())
+			}
 		}
 
 		if *args.mdate {

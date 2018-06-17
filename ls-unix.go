@@ -6,7 +6,12 @@ import (
 	"fmt"
 	"os"
 	"os/user"
+	"strconv"
+	"strings"
 	"syscall"
+
+	"github.com/willf/pad"
+	"golang.org/x/sys/unix"
 )
 
 func getOwnerAndGroup(fileInfo *os.FileInfo) (string, string) {
@@ -18,4 +23,13 @@ func getOwnerAndGroup(fileInfo *os.FileInfo) (string, string) {
 	group, err := user.LookupGroupId(gid)
 	check(err)
 	return owner.Username, group.Name
+}
+
+func deviceNumbers(absPath string) string {
+	stat := syscall.Stat_t{}
+	err := syscall.Stat(absPath, &stat)
+	check(err)
+	major := strconv.FormatInt(int64(unix.Major(uint64(stat.Rdev))), 10)
+	minor := strconv.FormatInt(int64(unix.Minor(uint64(stat.Rdev))), 10)
+	return pad.Left(strings.Join([]string{major, minor}, ","), 7, " ") + " " + Reset
 }
