@@ -13,6 +13,7 @@ type arguments struct {
 	bytes     *bool
 	mdate     *bool
 	owner     *bool
+	nogroup   *bool
 	perms     *bool
 	long      *bool
 	dirs      *bool
@@ -36,6 +37,7 @@ var args = arguments{
 	kingpin.Flag("bytes", "include size").Short('b').Bool(),
 	kingpin.Flag("mdate", "include modification date").Short('m').Bool(),
 	kingpin.Flag("owner", "include owner and group").Short('o').Bool(),
+	kingpin.Flag("nogroup", "hide group").Short('N').Bool(),
 	kingpin.Flag("perms", "include permissions for owner, group, and other").Short('p').Bool(),
 	kingpin.Flag("long", "include size, date, owner, and permissions").Short('l').Bool(),
 	kingpin.Flag("dirs", "only show directories").Short('d').Bool(),
