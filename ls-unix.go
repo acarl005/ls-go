@@ -19,7 +19,13 @@ func getOwnerAndGroup(fileInfo *os.FileInfo) (string, string) {
 	uid := fmt.Sprint(stat_t.Uid)
 	gid := fmt.Sprint(stat_t.Gid)
 	owner, err := user.LookupId(uid)
-	check(err)
+	var ownerName string
+	if err == nil {
+		ownerName = owner.Username
+	} else {
+		ownerName = uid
+	}
+
 	group, err := user.LookupGroupId(gid)
 	var groupName string
 	if err == nil {
@@ -27,7 +33,7 @@ func getOwnerAndGroup(fileInfo *os.FileInfo) (string, string) {
 	} else {
 		groupName = gid
 	}
-	return owner.Username, groupName
+	return ownerName, groupName
 }
 
 func deviceNumbers(absPath string) string {
