@@ -1,2 +1,4 @@
 .foo-files/
 .perm/
+ls-go
+*.swp
