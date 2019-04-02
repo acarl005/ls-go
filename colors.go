@@ -63,6 +63,7 @@ var (
 		"clj":      [2]string{Fg(204), Fg(162)},
 		"coffee":   [2]string{Fg(136), Fg(94)},
 		"cpp":      [2]string{Fg(33), Fg(20)},
+		"cr":       [2]string{Fg(82), Fg(70)},
 		"cs":       [2]string{Fg(33), Fg(20)},
 		"cson":     [2]string{Fg(136), Fg(94)},
 		"css":      [2]string{Fg(219), Fg(207)},

@@ -46,6 +46,7 @@ var icons = map[string]string{
 	"coffee":       "\ue751",
 	"conf":         "\ue615",
 	"cpp":          "\ue61d",
+	"cr":           "\ue23e",
 	"cson":         "\ue601",
 	"css":          "\ue749",
 	"d":            "\ue7af",
