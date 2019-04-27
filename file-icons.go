@@ -76,6 +76,7 @@ var icons = map[string]string{
 	"js":           "\ue781",
 	"json":         "\ue60b",
 	"jsx":          "\ue7ba",
+	"mjs":          "\ue718",
 	"less":         "\ue758",
 	"log":          "\uf18d",
 	"lua":          "\ue620",
