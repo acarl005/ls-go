@@ -71,6 +71,7 @@ var icons = map[string]string{
 	"image":        "\uf1c5",
 	"iml":          "\ue7b5",
 	"java":         "\ue738",
+	"jenkinsfile":  "\ue767",
 	"js":           "\ue781",
 	"json":         "\ue60b",
 	"jsx":          "\ue7ba",
