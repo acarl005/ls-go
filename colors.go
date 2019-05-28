@@ -107,6 +107,7 @@ var (
 	FileAliases = map[string]string{
 		"d":        "c",
 		"ts":       "js",
+		"tsx":      "jsx",
 		"bash":     "sh",
 		"zsh":      "sh",
 		"fish":     "sh",
