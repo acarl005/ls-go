@@ -57,9 +57,11 @@ var icons = map[string]string{
 	"d":            "\ue7af",
 	"dart":         "\ue798",
 	"db":           "\uf1c0",
+	"deb":          "\uf306",
 	"diff":         "\uf440",
 	"doc":          "\uf1c2",
 	"dockerfile":   "\ue7b0",
+	"dpkg":         "\uf17c",
 	"ebook":        "\uf02d",
 	"elm":          "\ue62c",
 	"env":          "\uf462",
@@ -106,6 +108,7 @@ var icons = map[string]string{
 	"rb":           "\ue21e",
 	"rdb":          "\ue76d",
 	"rss":          "\uf09e",
+	"rpm":          "\uf17c",
 	"rubydoc":      "\ue73b",
 	"sass":         "\ue603",
 	"scala":        "\ue737",
@@ -221,6 +224,7 @@ var aliases = map[string]string{
 	"gslides":          "ppt",
 	"pptx":             "ppt",
 	"pyc":              "py",
+	"whl":              "py",
 	"ipynb":            "ebook",
 	"rdata":            "r",
 	"rds":              "r",
@@ -289,8 +293,6 @@ var aliases = map[string]string{
 	"xz":               "zip",
 	"txz":              "zip",
 	"lzma":             "zip",
-	"deb":              "zip",
-	"rpm":              "zip",
 }
 
 var folders = map[string]string{
