@@ -67,6 +67,7 @@ var icons = map[string]string{
 	"env":          "\uf462",
 	"erl":          "\ue7b1",
 	"ex":           "\ue62d",
+	"ics":          "\uf073",
 	"key":          "\uf43d",
 	"file":         "\uf15b",
 	"font":         "\uf031",
