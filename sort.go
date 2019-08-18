@@ -30,13 +30,23 @@ func (s ByKind) Less(i, j int) bool {
 	var kindi, kindj string
 	if s[i].basename == "" {
 		kindi = "."
+	} else if s[i].ext == "" {
+		kindi = "0"
 	} else {
 		kindi = s[i].ext
 	}
 	if s[j].basename == "" {
 		kindj = "."
+	} else if s[j].ext == "" {
+		kindj = "0"
 	} else {
 		kindj = s[j].ext
+	}
+	if kindi == kindj {
+		if kindi == "." {
+			return s[i].ext < s[j].ext
+		}
+		return s[i].basename < s[j].basename
 	}
 	return kindi < kindj
 }
