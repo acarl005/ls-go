@@ -95,6 +95,7 @@ var (
 		"sol":    [2]string{Fg(33), Fg(20)},
 		"sql":    [2]string{Fg(193), Fg(148)},
 		"swift":  [2]string{Fg(223), Fg(215)},
+		"vue":    [2]string{Fg(43), Fg(29)},
 		"xml":    [2]string{Fg(87), Fg(73)},
 
 		"compiled": [2]string{FgGray(8), FgGray(5)},
