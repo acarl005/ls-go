@@ -76,6 +76,7 @@ var icons = map[string]string{
 	"go":           "\ue724",
 	"graphql":      "\ue284",
 	"groovy":       "\ue775",
+	"gv":           "\ue225",
 	"gruntfile.js": "\ue74c",
 	"gulpfile.js":  "\ue610",
 	"h":            "\uf0fd",

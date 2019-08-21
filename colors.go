@@ -74,6 +74,7 @@ var (
 		"graphql": [2]string{Fg(219), Fg(207)},
 		"groovy":  [2]string{Fg(223), Fg(215)},
 		"go":      [2]string{Fg(121), Fg(109)},
+		"gv":      [2]string{Fg(141), Fg(99)},
 		"hs":      [2]string{Fg(99), Fg(57)},
 		"html":    [2]string{Fg(87), Fg(73)},
 		"java":    [2]string{Fg(136), Fg(94)},
