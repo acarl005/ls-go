@@ -77,6 +77,7 @@ var (
 		"gv":      [2]string{Fg(141), Fg(99)},
 		"hs":      [2]string{Fg(99), Fg(57)},
 		"html":    [2]string{Fg(87), Fg(73)},
+		"ino":     [2]string{Fg(43), Fg(29)},
 		"java":    [2]string{Fg(136), Fg(94)},
 		"js":      [2]string{FgRGB(4, 4, 0), FgRGB(2, 2, 0)},
 		"mjs":     [2]string{FgRGB(4, 4, 0), FgRGB(2, 2, 0)},

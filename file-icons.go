@@ -85,6 +85,7 @@ var icons = map[string]string{
 	"image":        "\uf1c5",
 	"iml":          "\ue7b5",
 	"ini":          "\uf669",
+	"ino":          "\ue255",
 	"java":         "\ue738",
 	"jenkinsfile":  "\ue767",
 	"js":           "\ue781",
