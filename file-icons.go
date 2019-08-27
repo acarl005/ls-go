@@ -156,6 +156,7 @@ var aliases = map[string]string{
 	"wma":              "audio",
 	"mka":              "audio",
 	"opus":             "audio",
+	"feather":          "binary",
 	"pickle":           "binary",
 	"pkl":              "binary",
 	"pb":               "binary",
