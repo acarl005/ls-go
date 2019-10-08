@@ -131,6 +131,7 @@ var (
 		"ipynb":    "py",
 		"pickle":   "py",
 		"pkl":      "py",
+		"pyx":      "py",
 		"tsql":     "sql",
 		"psql":     "sql",
 		"plsql":    "sql",
