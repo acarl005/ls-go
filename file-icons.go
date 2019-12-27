@@ -5,21 +5,34 @@ import (
 )
 
 func getIconForFile(name, ext string) string {
-	key := strings.ToLower(ext)
-	alias, hasAlias := aliases[key]
-	if hasAlias {
-		key = alias
-	}
+	// default icon for all files. try to find a better one though...
 	icon := icons["file"]
-	betterIcon, hasBetterIcon := icons[key]
+
+	// resolve aliased extensions
+	extKey := strings.ToLower(ext)
+	alias, hasAlias := aliases[extKey]
+	if hasAlias {
+		extKey = alias
+	}
+
+	// see if we can find a better icon based on extension alone
+	betterIcon, hasBetterIcon := icons[extKey]
 	if hasBetterIcon {
 		icon = betterIcon
 	}
+
+	// now look for icons based on full names
 	fullName := name
 	if ext != "" {
 		fullName += "." + ext
 	}
-	bestIcon, hasBestIcon := icons[strings.ToLower(fullName)]
+
+	fullName = strings.ToLower(fullName)
+	fullAlias, hasFullAlias := aliases[fullName]
+	if hasFullAlias {
+		fullName = fullAlias
+	}
+	bestIcon, hasBestIcon := icons[fullName]
 	if hasBestIcon {
 		icon = bestIcon
 	}
@@ -39,6 +52,8 @@ var icons = map[string]string{
 	"ai":           "\ue7b4",
 	"android":      "\ue70e",
 	"apple":        "\uf179",
+	"as":           "\ue60b",
+	"asm":          "\ufb19",
 	"audio":        "\uf1c7",
 	"avro":         "\ue60b",
 	"binary":       "\uf471",
@@ -69,6 +84,7 @@ var icons = map[string]string{
 	"ex":           "\ue62d",
 	"ics":          "\uf073",
 	"key":          "\uf43d",
+	"f":            "\uf794",
 	"file":         "\uf15b",
 	"font":         "\uf031",
 	"gform":        "\uf298",
@@ -97,6 +113,7 @@ var icons = map[string]string{
 	"lock":         "\uf720",
 	"log":          "\uf18d",
 	"lua":          "\ue620",
+	"maintainers":  "\uf0c0",
 	"makefile":     "\ue20f",
 	"md":           "\uf48a",
 	"mustache":     "\ue60f",
@@ -105,7 +122,7 @@ var icons = map[string]string{
 	"patch":        "\uf440",
 	"pdf":          "\uf1c1",
 	"php":          "\ue608",
-	"pl":           "\ue769",
+	"pl":           "\ue7a1",
 	"ppt":          "\uf1c4",
 	"psd":          "\ue7b8",
 	"py":           "\ue606",
@@ -150,6 +167,7 @@ var aliases = map[string]string{
 	"gradle":           "android",
 	"ds_store":         "apple",
 	"localized":        "apple",
+	"s":                "asm",
 	"mp3":              "audio",
 	"ogg":              "audio",
 	"m4a":              "audio",
@@ -172,6 +190,8 @@ var aliases = map[string]string{
 	"c++":              "cpp",
 	"conf":             "cfg",
 	"config":           "cfg",
+	"cljs":             "clj",
+	"cljc":             "clj",
 	"gpg":              "key",
 	"pgp":              "key",
 	"pem":              "key",
@@ -190,6 +210,13 @@ var aliases = map[string]string{
 	"gdoc":             "doc",
 	"mobi":             "ebook",
 	"epub":             "ebook",
+	"f77":              "f",
+	"f90":              "f",
+	"f95":              "f",
+	"f03":              "f",
+	"for":              "f",
+	"ftn":              "f",
+	"fpp":              "f",
 	"eot":              "font",
 	"otf":              "font",
 	"ttf":              "font",
@@ -207,6 +234,7 @@ var aliases = map[string]string{
 	"h++":              "h",
 	"hxx":              "h",
 	"htm":              "html",
+	"xhtml":            "html",
 	"bmp":              "image",
 	"gif":              "image",
 	"ico":              "image",
@@ -233,12 +261,20 @@ var aliases = map[string]string{
 	"properties":       "json",
 	"webmanifest":      "json",
 	"tsx":              "jsx",
+	"credits":          "maintainers",
+	"codeowners":       "maintainers",
+	"cmake":            "makefile",
 	"license":          "md",
 	"markdown":         "md",
 	"mkd":              "md",
 	"rdoc":             "md",
 	"readme":           "md",
 	"netcdf":           "nc",
+	"php3":             "php",
+	"php4":             "php",
+	"php5":             "php",
+	"phpt":             "php",
+	"phtml":            "php",
 	"gslides":          "ppt",
 	"pptx":             "ppt",
 	"pyc":              "py",
