@@ -77,6 +77,7 @@ Flags:
   -i, --icons      show folder icon before dirs
   -n, --nerd-font  show nerd font glyphs before file names
   -r, --recurse    traverse all dirs recursively
+  -Z, --selinux    include security context
   -F, --find=FIND  filter items with a regexp
 
 Args:
