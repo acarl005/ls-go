@@ -188,6 +188,7 @@ var (
 		"xpm":      "media",
 		"orf":      "media",
 		"nef":      "media",
+		"tif":      "media",
 		"tiff":     "media",
 		"pxm":      "media",
 		"mp3":      "media",
