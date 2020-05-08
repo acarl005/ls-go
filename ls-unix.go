@@ -14,7 +14,7 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-func getOwnerAndGroup(fileInfo *os.FileInfo) (string, string) {
+func getOwnerAndGroup(parentDir string, fileInfo *os.FileInfo) (string, string) {
 	stat_t := (*fileInfo).Sys().(*syscall.Stat_t)
 	uid := fmt.Sprint(stat_t.Uid)
 	gid := fmt.Sprint(stat_t.Gid)

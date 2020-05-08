@@ -144,7 +144,7 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 	longestGroupName := 0
 	if *args.owner {
 		for _, fileInfo := range *items {
-			owner, group := getOwnerAndGroup(&fileInfo)
+			owner, group := getOwnerAndGroup(parentDir, &fileInfo)
 			longestOwnerName = max(longestOwnerName, len(owner))
 			longestGroupName = max(longestGroupName, len(group))
 		}
@@ -186,7 +186,7 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 			getLinkInfo(&displayItem, absPath)
 		}
 
-		owner, group := getOwnerAndGroup(&fileInfo)
+		owner, group := getOwnerAndGroup(parentDir, &fileInfo)
 		ownerColor, groupColor := getOwnerAndGroupColors(owner, group)
 
 		if *args.perms {

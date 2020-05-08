@@ -4,6 +4,7 @@ package main
 
 import (
 	"os"
+	"path/filepath"
 	"syscall"
 	"unsafe"
 )
@@ -14,8 +15,8 @@ var (
 	procGetSecurityDescriptorOwner = libadvapi32.NewProc("GetSecurityDescriptorOwner")
 )
 
-func getOwnerAndGroup(fileInfo *os.FileInfo) (string, string) {
-	path := (*fileInfo).Name()
+func getOwnerAndGroup(parentDir string, fileInfo *os.FileInfo) (string, string) {
+	path := filepath.Join(parentDir, (*fileInfo).Name())
 
 	var needed uint32
 	procGetFileSecurity.Call(
