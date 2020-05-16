@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -10,54 +9,65 @@ import (
 // see the color codes
 // http://i.stack.imgur.com/UQVe5.png
 
+// Fg wraps an 8-bit foreground color code in the ANSI escape sequence
 func Fg(code int) string {
 	colored := []string{"\x1b[38;5;", strconv.Itoa(code), "m"}
 	return strings.Join(colored, "")
 }
 
+// Bg wraps an 8-bit background color code in the ANSI escape sequence
 func Bg(code int) string {
 	colored := []string{"\x1b[48;5;", strconv.Itoa(code), "m"}
 	return strings.Join(colored, "")
 }
 
+// Rgb2code converts RGB values (up to 5) to an 8-bit color code
 func Rgb2code(r int, g int, b int) int {
 	code := 36*r + 6*g + b + 16
 	if code < 16 || 231 < code {
-		panic(errors.New(fmt.Sprintf("Invalid RGB values (%i, %i, %i)", r, g, b)))
+		panic(fmt.Errorf("Invalid RGB values (%d, %d, %d)", r, g, b))
 	}
 	return code
 }
 
+// Gray2code converts a scalar of "grayness" to an 8-bit color code
 func Gray2code(lightness int) int {
 	code := lightness + 232
 	if code < 232 || 255 < code {
-		panic(errors.New(fmt.Sprintf("Invalid lightness value (%i) for gray", lightness)))
+		panic(fmt.Errorf("Invalid lightness value (%d) for gray", lightness))
 	}
 	return code
 }
 
+// FgRGB converts RGB values (up to 5) to an ANSI-escaped foreground 8-bit color code
 func FgRGB(r int, g int, b int) string {
 	return Fg(Rgb2code(r, g, b))
 }
 
+// BgRGB converts RGB values (up to 5) to an ANSI-escaped background 8-bit color code
 func BgRGB(r int, g int, b int) string {
 	return Bg(Rgb2code(r, g, b))
 }
 
+// FgGray converts a scalar of "grayness" to an ANSI-escaped foreground 8-bit color code
 func FgGray(lightness int) string {
 	return Fg(Gray2code(lightness))
 }
 
+// BgGray converts a scalar of "grayness" to an ANSI-escaped background 8-bit color code
 func BgGray(lightness int) string {
 	return Bg(Gray2code(lightness))
 }
 
 const (
+	// Reset undoes ANSI color codes
 	Reset = "\x1b[0m"
-	Bold  = "\x1b[1m"
+	// Bold makes text bold
+	Bold = "\x1b[1m"
 )
 
 var (
+	// FileColor is a mapping of filetypes to colors
 	FileColor = map[string][2]string{
 		"as":      [2]string{Fg(124), Fg(52)},
 		"asm":     [2]string{Fg(223), Fg(215)},
@@ -114,6 +124,7 @@ var (
 		"media":    [2]string{Fg(141), Fg(99)},
 		"_default": [2]string{FgGray(23), FgGray(12)},
 	}
+	// FileAliases converts alternative extensions to their canonical mapping in FileColor
 	FileAliases = map[string]string{
 		"s":        "asm",
 		"b":        "bf",
@@ -269,6 +280,7 @@ var (
 		"psql":     "sql",
 		"tsql":     "sql",
 	}
+	// SizeColor has the color mappings for ranges of file sizes
 	SizeColor = map[string]string{
 		"B": Fg(27),
 		"K": Fg(33),
@@ -276,6 +288,7 @@ var (
 		"G": Fg(123),
 		"T": Fg(159),
 	}
+	// ConfigColor holds mappings for other various colors
 	ConfigColor = map[string]map[string]string{
 		"dir": map[string]string{
 			"name": Bold + BgRGB(0, 0, 2) + FgGray(23),
@@ -293,10 +306,11 @@ var (
 			"error":      BgRGB(5, 0, 0) + FgRGB(5, 5, 0),
 		},
 		"link": map[string]string{
-			"name":   Bold + FgRGB(0, 5, 0),
-			"arrow":  FgRGB(1, 0, 1),
-			"path":   FgRGB(4, 0, 4),
-			"broken": FgRGB(5, 0, 0),
+			"name":    Bold + FgRGB(0, 5, 0),
+			"nameDir": Bold + BgRGB(0, 0, 2) + FgRGB(0, 5, 5),
+			"arrow":   FgRGB(1, 0, 1),
+			"path":    FgRGB(4, 0, 4),
+			"broken":  FgRGB(5, 0, 0),
 		},
 		"device": map[string]string{
 			"name": Bold + BgGray(3) + Fg(220),
@@ -313,6 +327,7 @@ var (
 			"ms":     Fg(39),
 		},
 	}
+	// PermsColor holds color mappings for users and groups
 	PermsColor = map[string]map[string]string{
 		"user": map[string]string{
 			"root":     FgRGB(5, 0, 2),

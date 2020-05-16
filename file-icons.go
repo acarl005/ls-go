@@ -380,13 +380,14 @@ var folders = map[string]string{
 	".vscode":               "\ue70c",
 	".vim":                  "\ue62b",
 	"config":                "\ue5fc",
-	"folder":                "\uf115",
+	"folder":                "\uf07c",
 	"hidden":                "\uf023",
 	"node_modules":          "\ue5fa",
 }
 
 var otherIcons = map[string]string{
 	"link":       "\uf0c1",
+	"linkDir":    "\uf0c1",
 	"brokenLink": "\uf127",
 	"device":     "\uf0a0",
 }

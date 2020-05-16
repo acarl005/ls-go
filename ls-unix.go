@@ -15,9 +15,9 @@ import (
 )
 
 func getOwnerAndGroup(fileInfo *os.FileInfo) (string, string) {
-	stat_t := (*fileInfo).Sys().(*syscall.Stat_t)
-	uid := fmt.Sprint(stat_t.Uid)
-	gid := fmt.Sprint(stat_t.Gid)
+	statT := (*fileInfo).Sys().(*syscall.Stat_t)
+	uid := fmt.Sprint(statT.Uid)
+	gid := fmt.Sprint(statT.Gid)
 	owner, err := user.LookupId(uid)
 	var ownerName string
 	if err == nil {

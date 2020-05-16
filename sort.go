@@ -1,5 +1,6 @@
 package main
 
+// BySize tells `sort.Sort` how to sort by file size
 type BySize []*DisplayItem
 
 func (s BySize) Less(i, j int) bool {
@@ -12,6 +13,7 @@ func (s BySize) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
 
+// ByTime tells `sort.Sort` how to sort by last modified time
 type ByTime []*DisplayItem
 
 func (s ByTime) Less(i, j int) bool {
@@ -24,6 +26,7 @@ func (s ByTime) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
 
+// ByKind tells `sort.Sort` how to sort by file extension
 type ByKind []*DisplayItem
 
 func (s ByKind) Less(i, j int) bool {

@@ -19,6 +19,7 @@ import (
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
+// DisplayItem wraps the file stat info and string to be printed
 type DisplayItem struct {
 	display  string
 	info     os.FileInfo
@@ -27,6 +28,7 @@ type DisplayItem struct {
 	link     *LinkInfo
 }
 
+// LinkInfo wraps link stat info and whether the link points to valid file
 type LinkInfo struct {
 	path   string
 	info   os.FileInfo
@@ -34,12 +36,13 @@ type LinkInfo struct {
 }
 
 var (
-	True             = true // a helper varable to help make pointers to `true`
-	sizeUnits        = []string{"B", "K", "M", "G", "T"}
-	dateFormat       = "02.Jan'06" // uses the "reference time" https://golang.org/pkg/time/#Time.Format
-	timeFormat       = "15:04"
-	start      int64 = 0                              // keep track of execution time
-	stdout           = colorable.NewColorableStdout() // write to this to allow ANSI color codes to be compatible on Windows
+	// True is a helper varable to help make pointers to `true`
+	True       = true
+	sizeUnits  = []string{"B", "K", "M", "G", "T"}
+	dateFormat = "02.Jan'06" // uses the "reference time" https://golang.org/pkg/time/#Time.Format
+	timeFormat = "15:04"
+	start      int64                            // keep track of execution time
+	stdout     = colorable.NewColorableStdout() // write to this to allow ANSI color codes to be compatible on Windows
 )
 
 func main() {
@@ -94,9 +97,8 @@ func listDir(pathStr string) {
 		if strings.Contains(err.Error(), "no such file or directory") || strings.Contains(err.Error(), "permission denied") {
 			printErrorHeader(err, prettifyPath(pathStr))
 			return
-		} else {
-			check(err)
 		}
+		check(err)
 	}
 
 	// filter by the regexp if one was passed
@@ -167,7 +169,14 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 			basename: basename,
 		}
 
-		if fileInfo.IsDir() {
+		// read some info about linked file if this item is a symlink
+		if fileInfo.Mode()&os.ModeSymlink != 0 {
+			getLinkInfo(&displayItem, absPath)
+		}
+
+		if fileInfo.IsDir() || (fileInfo.Mode()&os.ModeSymlink != 0 &&
+			displayItem.link.info != nil &&
+			displayItem.link.info.IsDir()) {
 			if *args.files {
 				continue
 			} else {
@@ -179,11 +188,6 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 			} else {
 				files = append(files, &displayItem)
 			}
-		}
-
-		// read some info about linked file if this item is a symlink
-		if fileInfo.Mode()&os.ModeSymlink != 0 {
-			getLinkInfo(&displayItem, absPath)
 		}
 
 		owner, group := getOwnerAndGroup(&fileInfo)
@@ -274,7 +278,7 @@ func getLinkInfo(item *DisplayItem, absPath string) {
 	check(err1)
 
 	linkFullPath := linkPath
-	if linkPath[0] == '.' {
+	if linkPath[0] != '/' {
 		linkFullPath = path.Join(absPath, linkPath)
 	}
 
@@ -310,19 +314,36 @@ func nameString(item *DisplayItem) string {
 	if mode&os.ModeDir != 0 {
 		return dirString(item)
 	} else if mode&os.ModeSymlink != 0 {
-		color := ConfigColor["link"]["name"]
-		if *args.nerdfont {
-			var linkIcon string
-			if item.link.broken {
-				linkIcon = otherIcons["brokenLink"]
+		if !item.link.broken && item.link.info.IsDir() {
+			color := ConfigColor["link"]["nameDir"]
+			if *args.nerdfont {
+				var linkIcon string
+				if item.link.broken {
+					linkIcon = otherIcons["brokenLink"]
+				} else {
+					linkIcon = otherIcons["linkDir"]
+				}
+				return color + linkIcon + " " + name + " " + Reset
+			} else if *args.icons {
+				return color + "🔗 " + name + " " + Reset
 			} else {
-				linkIcon = otherIcons["link"]
+				return color + " " + name + " " + Reset
 			}
-			return color + linkIcon + " " + name + " " + Reset
-		} else if *args.icons {
-			return color + "🔗 " + name + " " + Reset
 		} else {
-			return color + name + " " + Reset
+			color := ConfigColor["link"]["name"]
+			if *args.nerdfont {
+				var linkIcon string
+				if item.link.broken {
+					linkIcon = otherIcons["brokenLink"]
+				} else {
+					linkIcon = otherIcons["link"]
+				}
+				return color + linkIcon + " " + name + " " + Reset
+			} else if *args.icons {
+				return color + "🔗 " + name + " " + Reset
+			} else {
+				return color + name + " " + Reset
+			}
 		}
 	} else if mode&os.ModeDevice != 0 {
 		color := ConfigColor["device"]["name"]
@@ -331,7 +352,7 @@ func nameString(item *DisplayItem) string {
 		} else if *args.icons {
 			return color + "💽 " + name + " " + Reset
 		} else {
-			return color + name + " " + Reset
+			return color + " " + name + " " + Reset
 		}
 	} else if mode&os.ModeNamedPipe != 0 {
 		return ConfigColor["pipe"]["name"] + " " + name + " " + Reset
