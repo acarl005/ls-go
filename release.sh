@@ -12,6 +12,7 @@ git tag -a v$TAG -m "release v$TAG"
 
 git push origin master --tags
 
+# go get github.com/github-release/github-release
 github-release release \
   --user acarl005 \
   --repo ls-go \
