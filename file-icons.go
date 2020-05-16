@@ -386,6 +386,7 @@ var folders = map[string]string{
 }
 
 var otherIcons = map[string]string{
-	"link":   "\uf0c1",
-	"device": "\uf0a0",
+	"link":       "\uf0c1",
+	"brokenLink": "\uf127",
+	"device":     "\uf0a0",
 }

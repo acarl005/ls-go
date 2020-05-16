@@ -272,7 +272,13 @@ func getLinkInfo(item *DisplayItem, absPath string) {
 	fullPath := path.Join(absPath, item.info.Name())
 	linkPath, err1 := os.Readlink(fullPath)
 	check(err1)
-	linkInfo, err2 := os.Stat(linkPath)
+
+	linkFullPath := linkPath
+	if linkPath[0] == '.' {
+		linkFullPath = path.Join(absPath, linkPath)
+	}
+
+	linkInfo, err2 := os.Stat(linkFullPath)
 	if *args.linkRel {
 		linkRel, _ := filepath.Rel(absPath, linkPath)
 		if linkRel != "" && len(linkRel) <= len(linkPath) {
@@ -284,6 +290,7 @@ func getLinkInfo(item *DisplayItem, absPath string) {
 			}
 		}
 	}
+
 	link := LinkInfo{
 		path: linkPath,
 	}
@@ -305,11 +312,17 @@ func nameString(item *DisplayItem) string {
 	} else if mode&os.ModeSymlink != 0 {
 		color := ConfigColor["link"]["name"]
 		if *args.nerdfont {
-			return color + otherIcons["link"] + " " + name + " " + Reset
+			var linkIcon string
+			if item.link.broken {
+				linkIcon = otherIcons["brokenLink"]
+			} else {
+				linkIcon = otherIcons["link"]
+			}
+			return color + linkIcon + " " + name + " " + Reset
 		} else if *args.icons {
 			return color + "🔗 " + name + " " + Reset
 		} else {
-			return color + " " + name + " " + Reset
+			return color + name + " " + Reset
 		}
 	} else if mode&os.ModeDevice != 0 {
 		color := ConfigColor["device"]["name"]
@@ -318,7 +331,7 @@ func nameString(item *DisplayItem) string {
 		} else if *args.icons {
 			return color + "💽 " + name + " " + Reset
 		} else {
-			return color + " " + name + " " + Reset
+			return color + name + " " + Reset
 		}
 	} else if mode&os.ModeNamedPipe != 0 {
 		return ConfigColor["pipe"]["name"] + " " + name + " " + Reset

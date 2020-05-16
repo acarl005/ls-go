@@ -296,7 +296,7 @@ var (
 			"name":   Bold + FgRGB(0, 5, 0),
 			"arrow":  FgRGB(1, 0, 1),
 			"path":   FgRGB(4, 0, 4),
-			"broken": BgRGB(5, 0, 0) + FgRGB(5, 5, 0),
+			"broken": FgRGB(5, 0, 0),
 		},
 		"device": map[string]string{
 			"name": Bold + BgGray(3) + Fg(220),
