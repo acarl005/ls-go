@@ -6,7 +6,7 @@ if [ -z $GITHUB_TOKEN ]; then
   exit 1
 fi
 
-TAG=0.1.0
+TAG=0.1.1
 
 git tag -a v$TAG -m "release v$TAG"
 
