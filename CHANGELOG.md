@@ -1,3 +1,6 @@
+### 2020-05-15
+- Fix bug with broken symlinks.
+
 ### 2018-06-16
 - Fix the calculation of kB, MB, GB, etc. which have graduations of 1024, not 1000.
 - Add more precision to the file sizes.

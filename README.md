@@ -95,6 +95,33 @@ This won't work unless you have a Nerd Font installed and selected in your termi
 
 This is inspired by [athityakumar/colorls](https://github.com/athityakumar/colorls) and [monsterkodi/color-ls](https://github.com/monsterkodi/color-ls), ported to Go, with various modifications.
 
+## Known Issues
+
+It fails on directories without executable permissions.
+The standard `/bin/ls` will also fail when reading non-executable directories,
+but only with certain options, like `ls -l`, `ls --color=always` (or `ls -G` on MacOS).
+This is because file metadata is needed to determine things like colors,
+and directories need to be executable to obtain the metadata of the contents.
+For example:
+
+```sh
+# create dir without -x permission
+$ mkdir -m 644 test
+
+# add a file
+$ sudo touch test/foo
+
+# plain `ls` still works
+$ /bin/ls test
+foo
+
+# but `ls -l` fails
+$ /bin/ls -l test
+
+# and so does ls-go
+$ ls-go test
+```
+
 ## Contributing
 
 Contributions are muchly appreciated!
