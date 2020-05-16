@@ -23,21 +23,6 @@ A terminal with xterm-256 colors is **required*.*
 - [x] Supports [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts).
 
 
-## Install
-
-With `go get`:
-
-```sh
-# do this once in a while
-$ go get -u github.com/acarl005/ls-go
-```
-
-With Homebrew:
-
-```sh
-brew install acarl005/homebrew-formulas/ls-go
-```
-
 ## Usage
 
 ![demo-1](./img/demo-1.png)
@@ -54,6 +39,14 @@ List subdirectories recursively.
 
 ![demo-5](./img/demo-5.png)
 
+
+### Nerd Font Support
+
+`ls-go` works with [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts).
+Simply add `--nerd-font` or `-n` to get file-specific icons.
+This won't work unless you have a Nerd Font installed and selected in your terminal emulator.
+
+![demo-4](./img/demo-4.png)
 
 ```
 usage: ls-go [<flags>] [<paths>...]
@@ -83,13 +76,23 @@ Args:
   [<paths>]  the files(s) and/or folder(s) to display
 ```
 
-### Nerd Font Support
 
-`ls-go` works with [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts).
-Simply add `--nerd-font` or `-n` to get file-specific icons.
-This won't work unless you have a Nerd Font installed and selected in your terminal emulator.
+## Install
 
-![demo-4](./img/demo-4.png)
+With `go get`:
+
+```sh
+# do this once in a while
+$ go get -u github.com/acarl005/ls-go
+```
+
+With Homebrew:
+
+```sh
+brew install acarl005/homebrew-formulas/ls-go
+```
+
+Or, you can download the latest pre-compiled binary from the [releases page](https://github.com/acarl005/ls-go/releases).
 
 ### Prior Art
 
