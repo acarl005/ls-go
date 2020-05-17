@@ -131,7 +131,7 @@ var icons = map[string]string{
 	"ppt":          "\uf1c4",
 	"psd":          "\ue7b8",
 	"py":           "\ue606",
-	"r":            "\uf25d",
+	"r":            "\ufcd2",
 	"rb":           "\ue21e",
 	"rdb":          "\ue76d",
 	"rpm":          "\uf17c",

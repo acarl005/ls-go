@@ -12,6 +12,8 @@ git tag -a v$TAG -m "release v$TAG"
 
 git push origin master --tags
 
+./compile
+
 # go get github.com/github-release/github-release
 github-release release \
   --user acarl005 \
@@ -19,9 +21,6 @@ github-release release \
   --tag v$TAG \
   --name v$TAG
 
-GOOS=darwin GOARCH=amd64 go build -o ls-go-darwin-amd64
-GOOS=linux GOARCH=amd64 go build -o ls-go-linux-amd64
-GOOS=linux GOARCH=arm64 go build -o ls-go-linux-arm64
 
 github-release upload \
   --user acarl005 \
