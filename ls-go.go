@@ -614,13 +614,14 @@ func printStats(numFiles, numDirs int) {
 	fmt.Fprintln(stdout, strings.Join(statStrings, " "))
 }
 
-func splitExt(filename string) (basename, ext string) {
-	if filepath.Base(filename)[0] == '.' {
-		ext = filename[1:]
-		basename = ""
+func splitExt(filename string) (basepath, ext string) {
+	basename := filepath.Base(filename)
+	if basename[0] == '.' {
+		ext = basename[1:]
+		basepath = filename[:len(filename)-len(ext)-1]
 	} else {
 		ext = filepath.Ext(filename)
-		basename = filename[:len(filename)-len(ext)]
+		basepath = filename[:len(filename)-len(ext)]
 		if ext != "" {
 			ext = ext[1:]
 		}

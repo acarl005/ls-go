@@ -69,7 +69,7 @@ const (
 var (
 	// FileColor is a mapping of filetypes to colors
 	FileColor = map[string][2]string{
-		"as":      [2]string{Fg(124), Fg(52)},
+		"as":      [2]string{Fg(196), Fg(124)},
 		"asm":     [2]string{Fg(223), Fg(215)},
 		"bf":      [2]string{Fg(223), Fg(215)},
 		"c":       [2]string{Fg(39), Fg(27)},
@@ -85,6 +85,7 @@ var (
 		"ex":      [2]string{Fg(99), Fg(57)},
 		"f":       [2]string{Fg(208), Fg(94)},
 		"fs":      [2]string{Fg(45), Fg(32)},
+		"gb":      [2]string{Fg(43), Fg(29)},
 		"go":      [2]string{Fg(121), Fg(109)},
 		"graphql": [2]string{Fg(219), Fg(207)},
 		"groovy":  [2]string{Fg(223), Fg(215)},
@@ -105,16 +106,17 @@ var (
 		"php":     [2]string{Fg(30), Fg(22)},
 		"pl":      [2]string{Fg(99), Fg(57)},
 		"plist":   [2]string{FgRGB(4, 0, 4), FgRGB(2, 0, 2)},
-		"py":      [2]string{FgRGB(0, 3, 0), FgRGB(0, 1, 0)},
+		"py":      [2]string{Fg(34), Fg(28)},
 		"r":       [2]string{Fg(51), Fg(39)},
 		"rb":      [2]string{FgRGB(5, 1, 0), FgRGB(3, 1, 1)},
 		"rs":      [2]string{Fg(208), Fg(94)},
-		"scala":   [2]string{Fg(124), Fg(52)},
+		"scala":   [2]string{Fg(196), Fg(124)},
 		"sh":      [2]string{FgRGB(4, 0, 4), FgRGB(2, 0, 2)},
 		"sol":     [2]string{Fg(39), Fg(27)},
 		"sql":     [2]string{Fg(193), Fg(148)},
 		"svelte":  [2]string{Fg(208), Fg(196)},
 		"swift":   [2]string{Fg(223), Fg(215)},
+		"vim":     [2]string{Fg(34), Fg(28)},
 		"vue":     [2]string{Fg(43), Fg(29)},
 		"xml":     [2]string{Fg(87), Fg(73)},
 
@@ -196,6 +198,7 @@ var (
 		"fsi":      "fs",
 		"fsscript": "fs",
 		"fsx":      "fs",
+		"dna":      "gb",
 		"gsh":      "groovy",
 		"gvy":      "groovy",
 		"gy":       "groovy",
@@ -279,6 +282,7 @@ var (
 		"plsql":    "sql",
 		"psql":     "sql",
 		"tsql":     "sql",
+		"vimrc":    "vim",
 	}
 	// SizeColor has the color mappings for ranges of file sizes
 	SizeColor = map[string]string{

@@ -61,6 +61,7 @@ func argsPostParse() {
 		args.mdate = &True
 		args.owner = &True
 		args.perms = &True
+		args.links = &True
 	}
 	if *args.dirs && *args.files {
 		log.Fatal("--dirs and --files cannot both be set")
