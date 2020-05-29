@@ -6,7 +6,7 @@ if [ -z $GITHUB_TOKEN ]; then
   exit 1
 fi
 
-TAG=0.1.1
+TAG=0.2.0
 
 git tag -a v$TAG -m "release v$TAG"
 
@@ -42,3 +42,10 @@ github-release upload \
   --tag v$TAG \
   --name ls-go-linux-arm64 \
   --file ls-go-linux-arm64
+
+github-release upload \
+  --user acarl005 \
+  --repo ls-go \
+  --tag v$TAG \
+  --name ls-go-linux-386 \
+  --file ls-go-linux-386
