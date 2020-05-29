@@ -1,3 +1,8 @@
+### 2020-05-29
+- Make some dark colors easier to see.
+- Symlink paths shown by default on -l option.
+- Fix more bugs with symlink display.
+
 ### 2020-05-15
 - Fix bug with broken symlinks.
 
