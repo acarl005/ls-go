@@ -105,7 +105,6 @@ var (
 		"ml":      [2]string{Fg(208), Fg(94)},
 		"php":     [2]string{Fg(30), Fg(22)},
 		"pl":      [2]string{Fg(99), Fg(57)},
-		"plist":   [2]string{FgRGB(4, 0, 4), FgRGB(2, 0, 2)},
 		"py":      [2]string{Fg(34), Fg(28)},
 		"r":       [2]string{Fg(51), Fg(39)},
 		"rb":      [2]string{FgRGB(5, 1, 0), FgRGB(3, 1, 1)},
