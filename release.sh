@@ -1,12 +1,18 @@
 #!/bin/bash
 set -ex
 
-if [ -z $GITHUB_TOKEN ]; then
+if ! command -v github-release >/dev/null; then
+  echo must install github-release
+  echo go get github.com/github-release/github-release
+  exit 1
+fi
+
+if [ -z "$GITHUB_TOKEN" ]; then
   echo must set GITHUB_TOKEN >&2
   exit 1
 fi
 
-TAG=0.2.0
+TAG=0.2.1
 
 git tag -a v$TAG -m "release v$TAG"
 
@@ -14,7 +20,6 @@ git push origin master --tags
 
 ./compile
 
-# go get github.com/github-release/github-release
 github-release release \
   --user acarl005 \
   --repo ls-go \
