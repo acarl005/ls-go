@@ -19,6 +19,8 @@ import (
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
+const VERSION = "0.2.3"
+
 // DisplayItem wraps the file stat info and string to be printed
 type DisplayItem struct {
 	display  string
@@ -63,6 +65,12 @@ func main() {
 	// parse the arguments and populate the struct
 	kingpin.Parse()
 	argsPostParse()
+
+	if *args.version {
+		fmt.Println("v" + VERSION)
+		return
+	}
+
 	generateColors()
 
 	// separate the directories from the regular files

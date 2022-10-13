@@ -9,6 +9,7 @@ import (
 // declare the struct that holds all the arguments
 type arguments struct {
 	paths     *[]string
+	version   *bool
 	all       *bool
 	bytes     *bool
 	mdate     *bool
@@ -34,6 +35,7 @@ type arguments struct {
 
 var args = arguments{
 	kingpin.Arg("paths", "the files(s) and/or folder(s) to display").Default(".").Strings(),
+	kingpin.Flag("version", "print version and exit").Short('v').Bool(),
 	kingpin.Flag("all", "show hidden files").Short('a').Bool(),
 	kingpin.Flag("bytes", "include size").Short('b').Bool(),
 	kingpin.Flag("mdate", "include modification date").Short('m').Bool(),
