@@ -17,27 +17,21 @@ A terminal with xterm-256 colors is **required*.*
 
 - [x] *Should* work on Linux, MacOS, and Windows.
 - [x] Outputs beautiful, semantic colors by default.
-- [x] Show paths to symlinks, and explicitly show broken links.
-- [x] Recurse down subdirectories.
-- [x] Emojis (if you're into that).
-- [x] Supports [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts).
+- [x] Show paths to symlinks, and explicitly show broken links (`-L`).
+- [x] Recurse down subdirectories (`-r`).
+- [x] Emojis, if you're into that (`-i`).
+- [x] Supports [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) (`-n`).
 
 
 ## Usage
 
-![demo-1](./img/demo-1.png)
+Basic usage:
 
-Of course, you can use an alias to save some typing and get your favorite options.
+![show basic usage](./img/demo-1.png)
 
-![demo-2](./img/demo-2.png)
+Of course, you can use an alias to save some typing and get your favorite options:
 
-Show locations of symlink.
-
-![demo-3](./img/demo-3.png)
-
-List subdirectories recursively.
-
-![demo-5](./img/demo-5.png)
+![show fancier options](./img/demo-2.png)
 
 
 ### Nerd Font Support
@@ -46,7 +40,7 @@ List subdirectories recursively.
 Simply add `--nerd-font` or `-n` to get file-specific icons.
 This won't work unless you have a Nerd Font installed and selected in your terminal emulator.
 
-![demo-4](./img/demo-4.png)
+![show with nerd font icons](./img/demo-3.png)
 
 ```
 usage: ls-go [<flags>] [<paths>...]
@@ -57,6 +51,7 @@ Flags:
   -b, --bytes      include size
   -m, --mdate      include modification date
   -o, --owner      include owner and group
+  -N, --nogroup    hide group
   -p, --perms      include permissions for owner, group, and other
   -l, --long       include size, date, owner, and permissions
   -d, --dirs       only show directories
@@ -66,11 +61,13 @@ Flags:
   -s, --size       sort items by size
   -t, --time       sort items by time
   -k, --kind       sort items by extension
+  -B, --backwards  reverse the sort order of --size, --time, or --kind
   -S, --stats      show statistics
   -i, --icons      show folder icon before dirs
   -n, --nerd-font  show nerd font glyphs before file names
   -r, --recurse    traverse all dirs recursively
   -F, --find=FIND  filter items with a regexp
+  -I, --light      output colors for light-bachground themes
 
 Args:
   [<paths>]  the files(s) and/or folder(s) to display
@@ -79,14 +76,9 @@ Args:
 
 ## Install
 
-With `go get`:
-
 ```sh
-# do this once in a while
-$ go get -u github.com/acarl005/ls-go
+go install github.com/acarl005/ls-go@latest
 ```
-
-With Homebrew:
 
 ```sh
 brew install acarl005/homebrew-formulas/ls-go
