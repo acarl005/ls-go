@@ -73,7 +73,6 @@ Args:
   [<paths>]  the files(s) and/or folder(s) to display
 ```
 
-
 ## Install
 
 ```sh
@@ -86,7 +85,9 @@ brew install acarl005/homebrew-formulas/ls-go
 
 Or, you can download the latest pre-compiled binary from the [releases page](https://github.com/acarl005/ls-go/releases).
 
-### Prior Art
+## Credits
+
+Screenshots taken using [Warp Terminal](https://www.warp.dev/).
 
 This is inspired by [athityakumar/colorls](https://github.com/athityakumar/colorls) and [monsterkodi/color-ls](https://github.com/monsterkodi/color-ls), ported to Go, with various modifications.
 
