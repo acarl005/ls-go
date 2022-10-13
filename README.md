@@ -21,7 +21,7 @@ A terminal with xterm-256 colors is **required*.*
 - [x] Recurse down subdirectories (`-r`).
 - [x] Emojis, if you're into that (`-i`).
 - [x] Supports [Nerd Fonts](https://github.com/ryanoasis/nerd-fonts) (`-n`).
-
+- [x] Dark or light backgrounds (`-I`).
 
 ## Usage
 
@@ -41,6 +41,12 @@ Simply add `--nerd-font` or `-n` to get file-specific icons.
 This won't work unless you have a Nerd Font installed and selected in your terminal emulator.
 
 ![show with nerd font icons](./img/demo-3.png)
+
+### Light Background Theme
+
+Has an option for white backgrounds.
+
+![show on white background](./img/demo-4.png)
 
 ```
 usage: ls-go [<flags>] [<paths>...]
@@ -86,6 +92,8 @@ brew install acarl005/homebrew-formulas/ls-go
 Or, you can download the latest pre-compiled binary from the [releases page](https://github.com/acarl005/ls-go/releases).
 
 ## Credits
+
+![Warp Terminal logo](./img/warp-logo.png)
 
 Screenshots taken using [Warp Terminal](https://www.warp.dev/).
 
