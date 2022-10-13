@@ -28,6 +28,14 @@ type DisplayItem struct {
 	link     *LinkInfo
 }
 
+func (item DisplayItem) Filename() string {
+	return item.basename + "." + item.ext
+}
+
+func (item DisplayItem) IsHidden() bool {
+	return item.basename == "" || item.basename[0] == '.'
+}
+
 // LinkInfo wraps link stat info and whether the link points to valid file
 type LinkInfo struct {
 	path   string
@@ -342,7 +350,7 @@ func nameString(item *DisplayItem) string {
 			} else if *args.icons {
 				return color + "🔗 " + name + " " + Reset
 			} else {
-				return color + name + " " + Reset
+				return color + " " + name + " " + Reset
 			}
 		}
 	} else if mode&os.ModeDevice != 0 {
@@ -355,18 +363,32 @@ func nameString(item *DisplayItem) string {
 			return color + " " + name + " " + Reset
 		}
 	} else if mode&os.ModeNamedPipe != 0 {
-		return ConfigColor["pipe"]["name"] + " " + name + " " + Reset
+		color := ConfigColor["pipe"]["name"]
+		if *args.nerdfont {
+			return color + otherIcons["pipe"] + " " + name + " " + Reset
+		} else if *args.icons {
+			return color + "🛢 " + name + " " + Reset
+		} else {
+			return color + " " + name + " " + Reset
+		}
 	} else if mode&os.ModeSocket != 0 {
-		return ConfigColor["socket"]["name"] + " " + name + " " + Reset
+		color := ConfigColor["socket"]["name"]
+		if *args.nerdfont {
+			return color + otherIcons["socket"] + " " + name + " " + Reset
+		} else if *args.icons {
+			return color + "🔌 " + name + " " + Reset
+		} else {
+			return color + " " + name + " " + Reset
+		}
 	}
 	return fileString(item)
 }
 
 func linkString(item *DisplayItem, absPath string) string {
 	colors := ConfigColor["link"]
-	displayStrings := []string{colors["arrow"] + "►"}
+	displayStrings := []string{}
 	if item.link.info == nil && item.link.broken {
-		displayStrings = append(displayStrings, colors["broken"]+item.link.path+Reset)
+		displayStrings = append(displayStrings, colors["broken"] + "►", item.link.path+Reset)
 	} else if item.link.info != nil {
 		linkname, linkext := splitExt(item.link.path)
 		displayItem := DisplayItem{
@@ -374,7 +396,11 @@ func linkString(item *DisplayItem, absPath string) string {
 			basename: linkname,
 			ext:      linkext,
 		}
-		displayStrings = append(displayStrings, nameString(&displayItem))
+		arrowColor := colors["arrow"]
+		if displayItem.info.IsDir() {
+			arrowColor = colors["arrowDir"]
+		}
+		displayStrings = append(displayStrings, arrowColor + "►", nameString(&displayItem))
 	} else {
 		displayStrings = append(displayStrings, item.link.path)
 	}
@@ -412,10 +438,19 @@ func fileString(item *DisplayItem) string {
 		}
 	} else if *args.icons {
 		if executable {
-			icon = BgGray(1) + FgRGB(0, 5, 0) + ">_" + Reset + " "
+			icon = BgGray(1) + NamedFg(BrightGreen) + ">_" + Reset + " "
 		}
+	} else {
+		icon = " "
 	}
-	displayStrings := []string{icon, colors[0], item.basename, colors[1], ext, Reset}
+
+	displayStrings := []string{icon}
+
+	if item.IsHidden() {
+		displayStrings = append(displayStrings, colors[1], item.basename, ext, Reset)
+	} else {
+		displayStrings = append(displayStrings, colors[0], item.basename, colors[1], ext, Reset)
+	}
 	return strings.Join(displayStrings, "")
 }
 
@@ -502,11 +537,11 @@ func permString(info os.FileInfo, ownerColor string, groupColor string) string {
 	} else if mode&os.ModeSocket != 0 {
 		filetype = "s"
 	}
-	coloredStrings := []string{defaultColor, filetype}
+	coloredStrings := []string{defaultColor, filetype, " "}
 	coloredStrings = append(coloredStrings, rwxString(mode, 2, ownerColor))
 	coloredStrings = append(coloredStrings, rwxString(mode, 1, groupColor))
-	coloredStrings = append(coloredStrings, rwxString(mode, 0, defaultColor), Reset, Reset)
-	return strings.Join(coloredStrings, " ")
+	coloredStrings = append(coloredStrings, rwxString(mode, 0, defaultColor), Reset, "  ")
+	return strings.Join(coloredStrings, "")
 }
 
 func sizeString(size int64) string {
@@ -616,15 +651,10 @@ func printStats(numFiles, numDirs int) {
 
 func splitExt(filename string) (basepath, ext string) {
 	basename := filepath.Base(filename)
-	if basename[0] == '.' {
-		ext = basename[1:]
-		basepath = filename[:len(filename)-len(ext)-1]
-	} else {
-		ext = filepath.Ext(filename)
-		basepath = filename[:len(filename)-len(ext)]
-		if ext != "" {
-			ext = ext[1:]
-		}
+	ext = filepath.Ext(filename)
+	basepath = strings.TrimSuffix(basename, ext)
+	if len(ext) > 0 {
+		ext = ext[1:]
 	}
 	return
 }

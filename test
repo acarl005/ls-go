@@ -1,0 +1,12 @@
+#/bin/bash
+
+set -e
+
+go build
+
+./ls-go example
+./ls-go -a example
+./ls-go -al example
+./ls-go -ali example
+./ls-go -alnkS example
+./ls-go -alnk notexist

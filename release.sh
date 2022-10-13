@@ -38,6 +38,13 @@ github-release upload \
   --user acarl005 \
   --repo ls-go \
   --tag v$TAG \
+  --name ls-go-darwin-arm64 \
+  --file ls-go-darwin-arm64
+
+github-release upload \
+  --user acarl005 \
+  --repo ls-go \
+  --tag v$TAG \
   --name ls-go-linux-amd64 \
   --file ls-go-linux-amd64
 

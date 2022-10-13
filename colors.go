@@ -6,8 +6,39 @@ import (
 	"strings"
 )
 
-// see the color codes
+// see the 256-color codes
 // http://i.stack.imgur.com/UQVe5.png
+
+type Color int8
+
+const (
+	Black Color   = 0
+	Red           = 1
+	Green         = 2
+	Yellow        = 3
+	Blue          = 4
+	Magenta       = 5
+	Cyan          = 6
+	White         = 7
+	BrightBlack   = 60
+	BrightRed     = 61
+	BrightGreen   = 62
+	BrightYellow  = 63
+	BrightBlue    = 64
+	BrightMagenta = 65
+	BrightCyan    = 66
+	BrightWhite   = 67
+)
+
+func NamedFg(color Color) string {
+	colored := []string{"\x1b[", strconv.Itoa(int(color) + 30), "m"}
+	return strings.Join(colored, "")
+}
+
+func NamedBg(color Color) string {
+	colored := []string{"\x1b[", strconv.Itoa(int(color) + 40), "m"}
+	return strings.Join(colored, "")
+}
 
 // Fg wraps an 8-bit foreground color code in the ANSI escape sequence
 func Fg(code int) string {
@@ -62,68 +93,67 @@ func BgGray(lightness int) string {
 const (
 	// Reset undoes ANSI color codes
 	Reset = "\x1b[0m"
-	// Bold makes text bold
 	Bold = "\x1b[1m"
 )
 
 var (
 	// FileColor is a mapping of filetypes to colors
 	FileColor = map[string][2]string{
-		"as":      [2]string{Fg(196), Fg(124)},
-		"asm":     [2]string{Fg(223), Fg(215)},
-		"bf":      [2]string{Fg(223), Fg(215)},
-		"c":       [2]string{Fg(39), Fg(27)},
-		"clj":     [2]string{Fg(204), Fg(162)},
-		"coffee":  [2]string{Fg(136), Fg(94)},
-		"cr":      [2]string{Fg(82), Fg(70)},
-		"cson":    [2]string{Fg(136), Fg(94)},
-		"css":     [2]string{Fg(219), Fg(207)},
-		"dart":    [2]string{Fg(43), Fg(31)},
-		"diff":    [2]string{Fg(10), Fg(9)},
-		"elm":     [2]string{Fg(51), Fg(39)},
-		"erl":     [2]string{Fg(161), Fg(89)},
-		"ex":      [2]string{Fg(99), Fg(57)},
-		"f":       [2]string{Fg(208), Fg(94)},
-		"fs":      [2]string{Fg(45), Fg(32)},
-		"gb":      [2]string{Fg(43), Fg(29)},
-		"go":      [2]string{Fg(121), Fg(109)},
-		"graphql": [2]string{Fg(219), Fg(207)},
-		"groovy":  [2]string{Fg(223), Fg(215)},
-		"gv":      [2]string{Fg(141), Fg(99)},
-		"hs":      [2]string{Fg(99), Fg(57)},
-		"html":    [2]string{Fg(87), Fg(73)},
-		"ino":     [2]string{Fg(43), Fg(29)},
-		"java":    [2]string{Fg(136), Fg(94)},
-		"jl":      [2]string{Fg(141), Fg(99)},
-		"js":      [2]string{FgRGB(4, 4, 0), FgRGB(2, 2, 0)},
-		"jsx":     [2]string{Fg(87), Fg(73)},
-		"lock":    [2]string{FgGray(8), FgGray(5)},
-		"log":     [2]string{FgGray(8), FgGray(5)},
-		"lua":     [2]string{Fg(39), Fg(27)},
-		"m":       [2]string{Fg(208), Fg(196)},
-		"md":      [2]string{Fg(87), Fg(73)},
-		"ml":      [2]string{Fg(208), Fg(94)},
-		"php":     [2]string{Fg(30), Fg(22)},
-		"pl":      [2]string{Fg(99), Fg(57)},
-		"py":      [2]string{Fg(34), Fg(28)},
-		"r":       [2]string{Fg(51), Fg(39)},
-		"rb":      [2]string{FgRGB(5, 1, 0), FgRGB(3, 1, 1)},
-		"rs":      [2]string{Fg(208), Fg(94)},
-		"scala":   [2]string{Fg(196), Fg(124)},
-		"sh":      [2]string{FgRGB(4, 0, 4), FgRGB(2, 0, 2)},
-		"sol":     [2]string{Fg(39), Fg(27)},
-		"sql":     [2]string{Fg(193), Fg(148)},
-		"svelte":  [2]string{Fg(208), Fg(196)},
-		"swift":   [2]string{Fg(223), Fg(215)},
-		"vim":     [2]string{Fg(34), Fg(28)},
-		"vue":     [2]string{Fg(43), Fg(29)},
-		"xml":     [2]string{Fg(87), Fg(73)},
+		"as":      {Fg(196), Fg(124)},
+		"asm":     {Fg(223), Fg(215)},
+		"bf":      {Fg(223), Fg(215)},
+		"c":       {Fg(39), Fg(27)},
+		"clj":     {Fg(204), Fg(162)},
+		"coffee":  {Fg(136), Fg(94)},
+		"cr":      {Fg(82), Fg(70)},
+		"cson":    {Fg(136), Fg(94)},
+		"css":     {Fg(219), Fg(207)},
+		"dart":    {Fg(43), Fg(31)},
+		"diff":    {Fg(10), Fg(9)},
+		"elm":     {Fg(51), Fg(39)},
+		"erl":     {Fg(161), Fg(89)},
+		"ex":      {Fg(99), Fg(57)},
+		"f":       {Fg(208), Fg(94)},
+		"fs":      {Fg(45), Fg(32)},
+		"gb":      {Fg(43), Fg(29)},
+		"go":      {Fg(121), Fg(109)},
+		"graphql": {Fg(219), Fg(207)},
+		"groovy":  {Fg(223), Fg(215)},
+		"gv":      {Fg(141), Fg(99)},
+		"hs":      {Fg(99), Fg(57)},
+		"html":    {Fg(87), Fg(73)},
+		"ino":     {Fg(43), Fg(29)},
+		"java":    {Fg(136), Fg(94)},
+		"jl":      {Fg(141), Fg(99)},
+		"js":      {FgRGB(4, 4, 0), FgRGB(2, 2, 0)},
+		"jsx":     {Fg(87), Fg(73)},
+		"lock":    {FgGray(8), FgGray(5)},
+		"log":     {FgGray(8), FgGray(5)},
+		"lua":     {Fg(39), Fg(27)},
+		"m":       {Fg(208), Fg(196)},
+		"md":      {Fg(87), Fg(73)},
+		"ml":      {Fg(208), Fg(94)},
+		"php":     {Fg(30), Fg(22)},
+		"pl":      {Fg(99), Fg(57)},
+		"py":      {Fg(34), Fg(28)},
+		"r":       {Fg(51), Fg(39)},
+		"rb":      {FgRGB(5, 1, 0), FgRGB(3, 1, 1)},
+		"rs":      {Fg(208), Fg(94)},
+		"scala":   {Fg(196), Fg(124)},
+		"sh":      {FgRGB(4, 0, 4), FgRGB(2, 0, 2)},
+		"sol":     {Fg(39), Fg(27)},
+		"sql":     {Fg(193), Fg(148)},
+		"svelte":  {Fg(208), Fg(196)},
+		"swift":   {Fg(223), Fg(215)},
+		"vim":     {Fg(34), Fg(28)},
+		"vue":     {Fg(43), Fg(29)},
+		"xml":     {Fg(87), Fg(73)},
 
-		"compiled": [2]string{FgGray(8), FgGray(5)},
-		"compress": [2]string{FgRGB(5, 0, 0), FgRGB(3, 0, 0)},
-		"document": [2]string{FgRGB(5, 0, 0), FgRGB(3, 0, 0)},
-		"media":    [2]string{Fg(141), Fg(99)},
-		"_default": [2]string{FgGray(23), FgGray(12)},
+		"compiled": {FgGray(8), FgGray(5)},
+		"compress": {FgRGB(5, 0, 0), FgRGB(3, 0, 0)},
+		"document": {FgRGB(5, 0, 0), FgRGB(3, 0, 0)},
+		"media":    {Fg(141), Fg(99)},
+		"_default": {NamedFg(White), NamedFg(BrightBlack)},
 	}
 	// FileAliases converts alternative extensions to their canonical mapping in FileColor
 	FileAliases = map[string]string{
@@ -207,6 +237,7 @@ var (
 		"json":     "js",
 		"mjs":      "js",
 		"ts":       "js",
+		"cjs":      "js",
 		"tsx":      "jsx",
 		"cjsx":     "jsx",
 		"mat":      "m",
@@ -293,38 +324,36 @@ var (
 	}
 	// ConfigColor holds mappings for other various colors
 	ConfigColor = map[string]map[string]string{
-		"dir": map[string]string{
+		"dir": {
 			"name": Bold + BgRGB(0, 0, 2) + FgGray(23),
-			"ext":  FgRGB(2, 2, 5),
 		},
-		".dir": map[string]string{
-			"name": Bold + BgRGB(0, 0, 1) + FgGray(23),
-			"ext":  FgRGB(2, 2, 5),
+		".dir": {
+			"name": Bold + BgRGB(0, 0, 1) + FgGray(18),
 		},
-		"folderHeader": map[string]string{
-			"arrow":      FgRGB(3, 2, 0),
-			"main":       BgGray(2) + FgRGB(3, 2, 0),
+		"folderHeader": {
+			"arrow":      NamedFg(Yellow),
+			"main":       BgGray(2) + NamedFg(Yellow),
 			"slash":      FgGray(5),
-			"lastFolder": Bold + FgRGB(5, 5, 0),
-			"error":      BgRGB(5, 0, 0) + FgRGB(5, 5, 0),
+			"lastFolder": Bold + NamedFg(BrightYellow),
+			"error":      NamedFg(BrightYellow) + NamedBg(Red),
 		},
-		"link": map[string]string{
-			"name":    Bold + FgRGB(0, 5, 0),
-			"nameDir": Bold + BgRGB(0, 0, 2) + FgRGB(0, 5, 5),
-			"arrow":   FgRGB(1, 0, 1),
-			"path":    FgRGB(4, 0, 4),
-			"broken":  FgRGB(5, 0, 0),
+		"link": {
+			"name":     NamedFg(BrightGreen),
+			"nameDir":  Bold + BgRGB(0, 0, 2) + NamedFg(BrightCyan),
+			"arrow":    NamedFg(BrightGreen),
+			"arrowDir": NamedFg(BrightCyan),
+			"broken":   NamedFg(BrightRed),
 		},
-		"device": map[string]string{
-			"name": Bold + BgGray(3) + Fg(220),
+		"device": {
+			"name": Bold + BgGray(3) + NamedFg(BrightYellow), // /dev
 		},
-		"socket": map[string]string{
+		"socket": {
 			"name": Bold + Bg(53) + Fg(15),
 		},
-		"pipe": map[string]string{
+		"pipe": {
 			"name": Bold + Bg(94) + Fg(15),
 		},
-		"stats": map[string]string{
+		"stats": {
 			"text":   BgGray(2) + FgGray(15),
 			"number": Fg(24),
 			"ms":     Fg(39),
@@ -332,20 +361,20 @@ var (
 	}
 	// PermsColor holds color mappings for users and groups
 	PermsColor = map[string]map[string]string{
-		"user": map[string]string{
+		"user": {
 			"root":     FgRGB(5, 0, 2),
 			"daemon":   FgRGB(4, 2, 1),
 			"_self":    FgRGB(0, 4, 0),
 			"_default": FgRGB(0, 3, 3),
 		},
-		"group": map[string]string{
+		"group": {
 			"wheel":    FgRGB(3, 0, 0),
 			"staff":    FgRGB(0, 2, 0),
 			"admin":    FgRGB(2, 2, 0),
 			"_default": FgRGB(2, 0, 2),
 		},
-		"other": map[string]string{
-			"_default": BgGray(2) + FgGray(15),
+		"other": {
+			"_default": FgGray(15),
 		},
 	}
 )
