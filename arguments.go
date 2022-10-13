@@ -29,6 +29,7 @@ type arguments struct {
 	nerdfont  *bool
 	recurse   *bool
 	find      *string
+	light     *bool
 }
 
 var args = arguments{
@@ -53,6 +54,7 @@ var args = arguments{
 	kingpin.Flag("nerd-font", "show nerd font glyphs before file names").Short('n').Bool(),
 	kingpin.Flag("recurse", "traverse all dirs recursively").Short('r').Bool(),
 	kingpin.Flag("find", "filter items with a regexp").Short('F').String(),
+	kingpin.Flag("light", "output colors for light-bachground themes").Short('I').Bool(),
 }
 
 func argsPostParse() {

@@ -63,6 +63,7 @@ func main() {
 	// parse the arguments and populate the struct
 	kingpin.Parse()
 	argsPostParse()
+	generateColors()
 
 	// separate the directories from the regular files
 	dirs := []string{}
@@ -388,7 +389,7 @@ func linkString(item *DisplayItem, absPath string) string {
 	colors := ConfigColor["link"]
 	displayStrings := []string{}
 	if item.link.info == nil && item.link.broken {
-		displayStrings = append(displayStrings, colors["broken"] + "►", item.link.path+Reset)
+		displayStrings = append(displayStrings, colors["broken"]+"►", item.link.path+Reset)
 	} else if item.link.info != nil {
 		linkname, linkext := splitExt(item.link.path)
 		displayItem := DisplayItem{
@@ -400,7 +401,7 @@ func linkString(item *DisplayItem, absPath string) string {
 		if displayItem.info.IsDir() {
 			arrowColor = colors["arrowDir"]
 		}
-		displayStrings = append(displayStrings, arrowColor + "►", nameString(&displayItem))
+		displayStrings = append(displayStrings, arrowColor+"►", nameString(&displayItem))
 	} else {
 		displayStrings = append(displayStrings, item.link.path)
 	}
@@ -425,6 +426,12 @@ func fileString(item *DisplayItem) string {
 		ext = "." + ext
 	}
 
+	mainColor := colors.light
+	accentColor := colors.dark
+	if *args.light && colors.themeSwitch {
+		mainColor = colors.dark
+		accentColor = colors.light
+	}
 	// in some cases files have icons if front
 	// if nerd font enabled, then it'll be a file-specific icon, or if its an executable script, a little shell icon
 	// if the regular --icons flag is used instead, then it will show a ">_" only if the file is executable
@@ -432,9 +439,9 @@ func fileString(item *DisplayItem) string {
 	executable := isExecutableScript(item)
 	if *args.nerdfont {
 		if executable {
-			icon = colors[0] + getIconForFile("", "shell") + " "
+			icon = mainColor + getIconForFile("", "shell") + " "
 		} else {
-			icon = colors[0] + getIconForFile(item.basename, item.ext) + " "
+			icon = mainColor + getIconForFile(item.basename, item.ext) + " "
 		}
 	} else if *args.icons {
 		if executable {
@@ -447,9 +454,9 @@ func fileString(item *DisplayItem) string {
 	displayStrings := []string{icon}
 
 	if item.IsHidden() {
-		displayStrings = append(displayStrings, colors[1], item.basename, ext, Reset)
+		displayStrings = append(displayStrings, accentColor, item.basename, ext, Reset)
 	} else {
-		displayStrings = append(displayStrings, colors[0], item.basename, colors[1], ext, Reset)
+		displayStrings = append(displayStrings, mainColor, item.basename, accentColor, ext, Reset)
 	}
 	return strings.Join(displayStrings, "")
 }
