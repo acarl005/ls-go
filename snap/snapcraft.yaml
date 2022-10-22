@@ -1,0 +1,35 @@
+name: ls-go
+version: "0.2.3"
+summary: A more colorful, user-friendly implementation of `ls` written in Go
+license: MIT
+description: |
+  You want to be able to glean a lot of information as quickly as possible from `ls`.
+  Colors can help your mind parse the information.
+  You can configure `ls` to color the output a little bit.
+  Configuring `ls` is a hassle though, and the colors are limited.
+  Instead, you can use `ls-go`. It is highly colored by default.
+  It has much fewer flags so you can get the behavior you want more easily.
+  The colors are beautiful and semantic. A terminal with xterm-256 colors is _required_.
+base: core22
+grade: stable
+confinement: classic
+compression: lzo
+
+apps:
+  ls-go:
+    command: ls-go
+
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+  - build-on: i368
+
+parts:
+  ls-go:
+    plugin: go
+    source: https://github.com/acarl005/ls-go
+    source-type: git
+    source-tag: "v$SNAPCRAFT_PROJECT_VERSION"
+    build-snaps: [go]
+    stage:
+      - terraform
