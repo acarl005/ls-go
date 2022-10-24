@@ -1,5 +1,5 @@
 name: ls-go
-version: "0.2.5"
+version: git
 summary: A more colorful, user-friendly implementation of `ls` written in Go
 license: MIT
 description: |
@@ -14,11 +14,12 @@ source-code: https://github.com/acarl005/ls-go
 base: core22
 grade: stable
 confinement: classic
-compression: lzo
 
 apps:
   ls-go:
-    command: ls-go
+    command: bin/ls-go
+    plugs:
+      - home
 
 architectures:
   - build-on: amd64
@@ -30,7 +31,3 @@ parts:
     plugin: go
     source: https://github.com/acarl005/ls-go
     source-type: git
-    source-tag: "v$SNAPCRAFT_PROJECT_VERSION"
-    build-snaps: [go]
-    stage:
-      - ls-go
