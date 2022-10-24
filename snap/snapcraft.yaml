@@ -10,6 +10,7 @@ description: |
   Instead, you can use `ls-go`. It is highly colored by default.
   It has much fewer flags so you can get the behavior you want more easily.
   The colors are beautiful and semantic. A terminal with xterm-256 colors is _required_.
+source-code: https://github.com/acarl005/ls-go
 base: core22
 grade: stable
 confinement: classic
@@ -32,4 +33,4 @@ parts:
     source-tag: "v$SNAPCRAFT_PROJECT_VERSION"
     build-snaps: [go]
     stage:
-      - terraform
+      - ls-go
