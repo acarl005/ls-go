@@ -376,6 +376,7 @@ func generateColors() {
 		"vim":     {FgRGB(0, 4, 0), FgRGB(0, 2, 0), true},
 		"vue":     {FgRGB(0, 4, 3), FgRGB(0, 2, 1), true},
 		"xml":     {FgRGB(1, 5, 5), FgRGB(1, 3, 3), true},
+		"zig":     {FgRGB(4, 4, 0), FgRGB(2, 2, 0), true},
 
 		"compiled": {FgGray(11), FgGray(7), false},
 		"compress": {FgRGB(5, 0, 0), FgRGB(3, 0, 0), true},

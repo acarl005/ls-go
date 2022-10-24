@@ -163,6 +163,7 @@ var icons = map[string]string{
 	"xls":          "\uf1c3",
 	"xml":          "\ue796",
 	"yml":          "\ue601",
+	"zig":          "\uf0e7",
 	"zip":          "\uf410",
 }
 
