@@ -355,6 +355,7 @@ func generateColors() {
 		"jl":      {FgRGB(3, 2, 5), FgRGB(2, 1, 5), true},
 		"js":      {FgRGB(4, 4, 0), FgRGB(2, 2, 0), true},
 		"jsx":     {FgRGB(1, 5, 5), FgRGB(1, 3, 3), true},
+		"kt":      {FgRGB(2, 1, 5), FgRGB(1, 0, 5), true},
 		"lock":    {FgGray(11), FgGray(7), false},
 		"log":     {FgGray(11), FgGray(7), false},
 		"lua":     {FgRGB(0, 3, 5), FgRGB(0, 1, 5), true},

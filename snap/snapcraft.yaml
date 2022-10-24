@@ -1,5 +1,5 @@
 name: ls-go
-version: "0.2.4"
+version: "0.2.5"
 summary: A more colorful, user-friendly implementation of `ls` written in Go
 license: MIT
 description: |
