@@ -122,6 +122,7 @@ var icons = map[string]string{
 	"ml":           "\ufb26",
 	"mustache":     "\ue60f",
 	"nc":           "\uf7c0",
+	"nim":          "\uf6a4",
 	"npmignore":    "\ue71e",
 	"package":      "\uf487",
 	"passwd":       "\uf023",
