@@ -13,7 +13,7 @@ description: |
 source-code: https://github.com/acarl005/ls-go
 base: core22
 grade: stable
-confinement: classic
+confinement: strict
 
 apps:
   ls-go:

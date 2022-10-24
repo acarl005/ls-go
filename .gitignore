@@ -2,4 +2,5 @@
 .perm/
 ls-go
 ls-go-*
+ls-go_*
 *.swp
