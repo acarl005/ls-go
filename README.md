@@ -81,12 +81,22 @@ Args:
 
 ## Install
 
+If you have Golang installed:
+
 ```sh
 go install github.com/acarl005/ls-go@latest
 ```
 
+On MacOS with Homebrew:
+
 ```sh
 brew install acarl005/homebrew-formulas/ls-go
+```
+
+On Linux with Snap:
+
+```sh
+sudo snap install ls-go
 ```
 
 Or, you can download the latest pre-compiled binary from the [releases page](https://github.com/acarl005/ls-go/releases).
