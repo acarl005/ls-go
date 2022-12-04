@@ -110,6 +110,7 @@ var icons = map[string]string{
 	"json":         "\ue60b",
 	"jsx":          "\ue7ba",
 	"key":          "\uf43d",
+	"ko":           "\uebc6",
 	"kt":           "\ue634",
 	"less":         "\ue758",
 	"lock":         "\uf720",
