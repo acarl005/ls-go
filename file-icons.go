@@ -291,6 +291,7 @@ var aliases = map[string]string{
 	"codeowners":       "maintainers",
 	"credits":          "maintainers",
 	"cmake":            "makefile",
+	"justfile":         "makefile",
 	"markdown":         "md",
 	"mkd":              "md",
 	"rdoc":             "md",
