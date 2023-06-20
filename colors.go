@@ -286,6 +286,7 @@ var (
 		"pnm":      "media",
 		"ppm":      "media",
 		"pxm":      "media",
+		"sixel":    "media",
 		"stl":      "media",
 		"svg":      "media",
 		"tif":      "media",

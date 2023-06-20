@@ -269,6 +269,7 @@ var aliases = map[string]string{
 	"pnm":              "image",
 	"ppm":              "image",
 	"pxm":              "image",
+	"sixel":            "image",
 	"stl":              "image",
 	"svg":              "image",
 	"tif":              "image",
