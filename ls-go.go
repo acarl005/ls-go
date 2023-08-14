@@ -19,9 +19,9 @@ import (
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
-const VERSION = "0.2.5"
+const VERSION = "1.0.0"
 
-// DisplayItem wraps the file stat info and string to be printed
+// Wraps the file stat info and string to be printed.
 type DisplayItem struct {
 	display  string
 	info     os.FileInfo
@@ -38,7 +38,7 @@ func (item DisplayItem) IsHidden() bool {
 	return item.basename == "" || item.basename[0] == '.'
 }
 
-// LinkInfo wraps link stat info and whether the link points to valid file
+// Wraps link stat info and whether the link points to valid file.
 type LinkInfo struct {
 	path   string
 	info   os.FileInfo
@@ -46,13 +46,18 @@ type LinkInfo struct {
 }
 
 var (
-	// True is a helper varable to help make pointers to `true`
-	True       = true
-	sizeUnits  = []string{"B", "K", "M", "G", "T"}
-	dateFormat = "02.Jan'06" // uses the "reference time" https://golang.org/pkg/time/#Time.Format
+	// True is a helper varable to help make pointers to `true`.
+	True = true
+	// Prefixes for metric units.
+	sizeUnits = []string{"B", "K", "M", "G", "T", "P", "E"}
+	// Uses the "reference time"
+	// https://golang.org/pkg/time/#Time.Format
+	dateFormat = "02.Jan'06"
 	timeFormat = "15:04"
-	start      int64                            // keep track of execution time
-	stdout     = colorable.NewColorableStdout() // write to this to allow ANSI color codes to be compatible on Windows
+	// Keeps track of execution time.
+	start int64
+	// Write to this to allow ANSI color codes to be compatible on Windows.
+	stdout = colorable.NewColorableStdout()
 )
 
 func main() {
@@ -559,6 +564,8 @@ func permString(info os.FileInfo, ownerColor string, groupColor string) string {
 	return strings.Join(coloredStrings, "")
 }
 
+// Convert an integer number of bytes to a human-readable string using metric units with IEC binary
+// prefixes, e.g. 10240 becomes "10 KiB", but we only show 1-letter units like "K".
 func sizeString(size int64) string {
 	sizeFloat := float64(size)
 	for i, unit := range sizeUnits {
@@ -568,7 +575,12 @@ func sizeString(size int64) string {
 			if i == 0 {
 				sizeStr = strconv.FormatInt(size, 10)
 			} else {
-				sizeStr = fmt.Sprintf("%.2f", sizeFloat/base)
+				value := sizeFloat / base
+				if value < 1000 {
+					sizeStr = fmt.Sprintf("%.2f", value)
+				} else {
+					sizeStr = fmt.Sprintf("%.1f", value)
+				}
 			}
 			return SizeColor[unit] + pad.Left(sizeStr, 6, " ") + unit + " " + Reset
 		}
@@ -581,14 +593,14 @@ func timeString(modtime time.Time) string {
 	timeStr := modtime.Format(timeFormat)
 	hour, err := strconv.Atoi(timeStr[0:2])
 	check(err)
-	// generate a color based on the hour of the day. darkest around midnight and whitest around noon
+	// Generate a color based on the hour of the day. darkest at midnight and lightest at noon.
 	timeColor := 14 - int(8*math.Cos(math.Pi*float64(hour)/12))
 	colored := []string{FgGray(22) + dateStr, FgGray(timeColor) + timeStr, Reset}
 	return strings.Join(colored, " ")
 }
 
-// when we list out any subdirectories, print those paths conspicuously above the contents
-// this helps with visual separation
+// When we list out any subdirectories, print those paths conspicuously above the contents. This helps with
+// visual separation.
 func printFolderHeader(pathStr string) {
 	colors := ConfigColor["folderHeader"]
 	headerString := colors["arrow"] + "►" + colors["main"] + " "
@@ -600,7 +612,8 @@ func printFolderHeader(pathStr string) {
 		folders := strings.Split(prettyPath, "/")
 		coloredFolders := make([]string, 0, len(folders))
 		for i, folder := range folders {
-			if i == len(folders)-1 { // different color for the last folder in the path
+			// Use different color for the last folder in the path.
+			if i == len(folders)-1 {
 				coloredFolders = append(coloredFolders, colors["lastFolder"]+folder)
 			} else {
 				coloredFolders = append(coloredFolders, colors["main"]+folder)
