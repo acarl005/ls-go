@@ -260,6 +260,8 @@ var (
 		"flac":     "media",
 		"flv":      "media",
 		"gif":      "media",
+		"glp":      "media",
+		"gltf":     "media",
 		"ico":      "media",
 		"image":    "media",
 		"jpeg":     "media",
