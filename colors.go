@@ -370,6 +370,7 @@ func generateColors() {
 		"md":      {FgRGB(1, 5, 5), FgRGB(1, 3, 3), true},
 		"ml":      {FgRGB(5, 2, 0), FgRGB(2, 1, 0), true},
 		"nim":     {FgRGB(4, 4, 0), FgRGB(2, 2, 0), true},
+		"nix":     {FgRGB(0, 3, 5), FgRGB(0, 1, 5), true},
 		"php":     {FgRGB(0, 3, 4), FgRGB(0, 2, 2), true},
 		"pl":      {FgRGB(2, 1, 5), FgRGB(1, 0, 5), true},
 		"py":      {FgRGB(0, 4, 0), FgRGB(0, 2, 0), true},
