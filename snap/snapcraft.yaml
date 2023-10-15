@@ -21,7 +21,10 @@ apps:
     plugs:
       - home
 
-architectures: [amd64, arm64, i368]
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+  - build-on: i368
 
 parts:
   ls-go:
