@@ -21,13 +21,11 @@ apps:
     plugs:
       - home
 
-architectures:
-  - build-on: amd64
-  - build-on: arm64
-  - build-on: i368
+architectures: [amd64, arm64, i368]
 
 parts:
   ls-go:
     plugin: go
+    build-snaps: [go/latest/stable]
     source: https://github.com/acarl005/ls-go
     source-type: git
