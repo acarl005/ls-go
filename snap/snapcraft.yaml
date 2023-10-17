@@ -29,5 +29,6 @@ architectures:
 parts:
   ls-go:
     plugin: go
+    build-snaps: [go/latest/stable]
     source: https://github.com/acarl005/ls-go
     source-type: git
