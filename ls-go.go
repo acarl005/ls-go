@@ -19,7 +19,7 @@ import (
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
-const VERSION = "1.0.0"
+const VERSION = "1.0.1"
 
 // Wraps the file stat info and string to be printed.
 type DisplayItem struct {
