@@ -314,6 +314,7 @@ var (
 		"csh":      "sh",
 		"fish":     "sh",
 		"ksh":      "sh",
+		"ps1":      "sh",
 		"zsh":      "sh",
 		"plpgsql":  "sql",
 		"plsql":    "sql",

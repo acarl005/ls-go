@@ -356,6 +356,7 @@ var aliases = map[string]string{
 	"csh":              "shell",
 	"fish":             "shell",
 	"ksh":              "shell",
+	"ps1":              "shell",
 	"sh":               "shell",
 	"zsh":              "shell",
 	"zsh-theme":        "shell",
