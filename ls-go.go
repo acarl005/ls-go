@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/opencontainers/selinux/go-selinux"
 	"github.com/acarl005/textcol"
 	colorable "github.com/mattn/go-colorable"
 	"github.com/willf/pad"
@@ -174,6 +175,14 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 		}
 	}
 
+	longestSELinuxLabel := 0
+	if *args.selinux && selinux.GetEnabled() {
+		for _, fileInfo := range *items {
+			selinuxlabel := getSELinuxLabel(path.Join(absPath, fileInfo.Name()))
+			longestSELinuxLabel = max(longestSELinuxLabel, len(selinuxlabel))
+		}
+	}
+
 	for _, fileInfo := range *items {
 		// if this is a dotfile (hidden file)
 		if fileInfo.Name()[0] == '.' {
@@ -228,6 +237,12 @@ func listFiles(parentDir string, items *[]os.FileInfo, forceDotfiles bool) {
 			}
 			ownerInfo = append(ownerInfo, Reset)
 			displayItem.display += strings.Join(ownerInfo, " ")
+		}
+
+		if *args.selinux && selinux.GetEnabled() {
+			selinuxLabel := getSELinuxLabel(path.Join(absPath, fileInfo.Name()))
+			paddedSELinuxLabel := pad.Right(selinuxLabel, longestSELinuxLabel, " ")
+			displayItem.display += paddedSELinuxLabel
 		}
 
 		if *args.bytes {
@@ -685,6 +700,12 @@ func splitExt(filename string) (basepath, ext string) {
 		ext = ext[1:]
 	}
 	return
+}
+
+func getSELinuxLabel(absPath string) (string) {
+	selinuxLabel, err := selinux.FileLabel(absPath)
+	check(err)
+	return selinuxLabel
 }
 
 // Go doesn't provide a `Max` function for ints like it does for floats (wtf?)
