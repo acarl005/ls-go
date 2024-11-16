@@ -351,6 +351,7 @@ func generateColors() {
 		"f":       {FgRGB(5, 2, 0), FgRGB(2, 1, 0), true},
 		"fs":      {FgRGB(0, 4, 5), FgRGB(0, 2, 4), true},
 		"gb":      {FgRGB(0, 4, 3), FgRGB(0, 2, 1), true},
+		"gleam":   {FgRGB(5, 3, 5), FgRGB(5, 1, 5), true},
 		"go":      {FgRGB(2, 5, 3), FgRGB(2, 3, 3), true},
 		"graphql": {FgRGB(5, 3, 5), FgRGB(5, 1, 5), true},
 		"groovy":  {FgRGBT(5, 4, 3), FgRGBT(5, 3, 1), false},
