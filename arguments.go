@@ -29,6 +29,7 @@ type arguments struct {
 	icons     *bool
 	nerdfont  *bool
 	recurse   *bool
+	selinux   *bool
 	find      *string
 	light     *bool
 }
@@ -55,6 +56,7 @@ var args = arguments{
 	kingpin.Flag("icons", "show folder icon before dirs").Short('i').Bool(),
 	kingpin.Flag("nerd-font", "show nerd font glyphs before file names").Short('n').Bool(),
 	kingpin.Flag("recurse", "traverse all dirs recursively").Short('r').Bool(),
+	kingpin.Flag("selinux", "include security context").Short('Z').Bool(),
 	kingpin.Flag("find", "filter items with a regexp").Short('F').String(),
 	kingpin.Flag("light", "output colors for light-bachground themes").Short('I').Bool(),
 }
